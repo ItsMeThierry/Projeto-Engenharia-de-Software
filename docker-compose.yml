@@ -1,0 +1,45 @@
+version: '3.8'
+services:
+  # Serviço do PostgreSQL
+  postgres:
+    image: postgres:15.3-alpine
+    container_name: projeto-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: usuario
+      POSTGRES_PASSWORD: senha
+      POSTGRES_DB: banco_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+
+  # Serviço do React (Frontend)
+  react-app:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: projeto-react
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
