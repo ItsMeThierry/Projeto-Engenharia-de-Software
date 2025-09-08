@@ -1,40 +1,66 @@
-version: '3.8'
 services:
-  # Serviço do PostgreSQL
   postgres:
-    image: postgres:15.3-alpine
-    container_name: projeto-postgres
-    restart: always
+    image: postgres:15-alpine
+    container_name: banco_de_dados
     environment:
+      POSTGRES_DB: meu_projeto_db
       POSTGRES_USER: usuario
-      POSTGRES_PASSWORD: senha
-      POSTGRES_DB: banco_dev
+      POSTGRES_PASSWORD: senha_segura
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - app-network
+    restart: unless-stopped
 
-  # Serviço do React (Frontend)
-  react-app:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
-    container_name: projeto-react
-    restart: always
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
     ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - "5000:5000"
     environment:
-      - CHOKIDAR_USEPOLLING=true
+      - NODE_ENV=development
+      - DB_HOST=postgres
+      - DB_USER=usuario
+      - DB_PASSWORD=senha_segura
+      - DB_NAME=meu_projeto_db
+      - DB_PORT=5432
+      - PORT=5000
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
     depends_on:
       - postgres
     networks:
       - app-network
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
 
 volumes:
   postgres_data:

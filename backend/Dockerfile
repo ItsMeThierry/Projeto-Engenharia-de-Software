@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Expõe a porta padrão do React (normalmente 3000)
-EXPOSE 3000
+EXPOSE 5000
 
 # Comando para iniciar a aplicação em modo de desenvolvimento
 CMD ["npm", "start"]
