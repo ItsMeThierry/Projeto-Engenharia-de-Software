@@ -2,7 +2,7 @@
 FROM node:18-alpine
 
 # Define o diretório de trabalho no container
-WORKDIR /app
+WORKDIR /src
 
 # Copia os arquivos de dependências
 COPY package*.json ./
@@ -13,7 +13,7 @@ RUN npm install
 # Copia o restante do código da aplicação
 COPY . .
 
-# Expõe a porta padrão do React (normalmente 3000)
+# Expõe a porta padrão (normalmente 5000)
 EXPOSE 5000
 
 # Comando para iniciar a aplicação em modo de desenvolvimento
