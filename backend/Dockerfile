@@ -1,20 +1,20 @@
-# Usa uma imagem base do Node.js
+# Use a imagem oficial do Node.js
 FROM node:18-alpine
 
-# Define o diretório de trabalho no container
+# Define o diretório de trabalho
 WORKDIR /src
 
-# Copia os arquivos de dependências
+# Copia os arquivos package.json e package-lock.json (se existir)
 COPY package*.json ./
 
 # Instala as dependências
 RUN npm install
 
-# Copia o restante do código da aplicação
+# Copia o resto do código
 COPY . .
 
-# Expõe a porta padrão (normalmente 5000)
+# Expõe a porta que o app usa
 EXPOSE 5000
 
-# Comando para iniciar a aplicação em modo de desenvolvimento
-CMD ["npm", "start"]
+# Comando para rodar o app
+CMD ["npm", "run", "dev"]
