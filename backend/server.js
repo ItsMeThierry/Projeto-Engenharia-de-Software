@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-<<<<<<< HEAD
 const createTables = require('./db/createTables');
 
 // Caminho das rotas
@@ -10,10 +9,6 @@ const modulosRouter = require('./routes/modulos');
 const noticiasRouter = require('./routes/noticias');
 const conteudoRouter = require('./routes/conteudo');
 const usuariosEmCursoRouter = require('./routes/usuarioemcurso');
-=======
-const { Pool } = require('pg');
-require('dotenv').config();
->>>>>>> main
 
 // Configuração básica
 const app = express();
