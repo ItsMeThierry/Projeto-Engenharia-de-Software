@@ -8,7 +8,7 @@ const cursosRouter = require('./routes/cursos');
 const modulosRouter = require('./routes/modulos');
 const noticiasRouter = require('./routes/noticias');
 const conteudoRouter = require('./routes/conteudo');
-const usuariosEmCursoRouter = require('./routes/usuariosEmCurso');
+const usuariosEmCursoRouter = require('./routes/usuarioemcurso');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
