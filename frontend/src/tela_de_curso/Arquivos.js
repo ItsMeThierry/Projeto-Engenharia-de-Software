@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import './Arquivos.css'
 
 function Archives() {
     return (
         <div class='page'>
-            <ContentGroup title='Circuito RC' description='Nesse conteúdo vemos o circuito RC, suas fórmulas e utilidades como filtros' contents={[{ name: "Exercícios Práticos", type: "pdf", size: "3 MB" }]}/>
+            <ContentGroup title='Circuito RC' description='Nesse conteúdo vemos o circuito RC, suas fórmulas e utilidades como filtros' contents={[{ name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }]}/>
             <ContentGroup title='Circuito RC' description='Nesse conteúdo vemos o circuito RC, suas fórmulas e utilidades como filtros' contents={[{ name: "Exercícios Práticos", type: "pdf", size: "3 MB" }]}/>
             <ContentGroup title='Circuito RC' description='Nesse conteúdo vemos o circuito RC, suas fórmulas e utilidades como filtros' contents={[{ name: "Exercícios Práticos", type: "pdf", size: "3 MB" }]}/>        
         </div>
