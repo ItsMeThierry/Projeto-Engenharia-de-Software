@@ -1,0 +1,205 @@
+/* Container principal do chat */
+.chat {
+    width: 100%;
+    max-width: 800px;
+    height: 500px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Corpo do chat - área das mensagens */
+.chat-body {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #fafafa;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Área dos botões/input */
+.chat-buttons {
+    padding: 15px 20px;
+    background-color: white;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Input de texto */
+.chat-buttons input[type='text'] {
+    flex: 1;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    outline: none;
+    font-size: 14px;
+    background-color: #f9f9f9;
+}
+
+.chat-buttons input[type='text']:focus {
+    border-color: #007bff;
+    background-color: white;
+}
+
+/* Botão de enviar */
+.send-btn {
+    width: 45px;
+    height: 45px;
+    border: none;
+    border-radius: 50%;
+    background-color: #007bff;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.send-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Mensagem recebida (esquerda) */
+.message {
+    align-self: flex-start;
+    max-width: 70%;
+    background-color: white;
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+}
+
+/* Mensagem enviada (direita) */
+.sender-message {
+    align-self: flex-end;
+    max-width: 70%;
+    background-color: #007bff;
+    color: white;
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Informações do usuário (avatar, nome, data) */
+.info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+/* Avatar */
+.avatar {
+    font-size: 24px;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0;
+    border-radius: 50%;
+}
+
+.sender-message .avatar {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Nome do usuário */
+.user-name {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+}
+
+.sender-message .user-name {
+    color: white;
+}
+
+/* Data */
+.date {
+    font-size: 12px;
+    font-weight: normal;
+    margin: 0;
+    color: #666;
+    opacity: 0.8;
+}
+
+.sender-message .date {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Texto da mensagem */
+.text {
+    font-size: 14px;
+    line-height: 1.4;
+    margin: 0;
+    word-wrap: break-word;
+    color: #333;
+}
+
+.sender-message .text {
+    color: white;
+}
+
+/* Scrollbar customizada para o chat-body */
+.chat-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.chat-body::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+.chat-body::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .page {
+        padding: 10px;
+    }
+    
+    .chat {
+        max-width: 100%;
+        height: 400px;
+    }
+    
+    .message,
+    .sender-message {
+        max-width: 85%;
+    }
+    
+    .chat-buttons {
+        padding: 10px 15px;
+    }
+    
+    .user-name {
+        font-size: 13px;
+    }
+    
+    .date {
+        font-size: 11px;
+    }
+    
+    .text {
+        font-size: 13px;
+    }
+}
