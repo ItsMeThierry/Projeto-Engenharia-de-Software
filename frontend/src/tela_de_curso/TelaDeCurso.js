@@ -1,4 +1,9 @@
 import React, { useState } from 'react';
+import { ReactComponent as ArchiveIcon } from '../icones/pasta.svg';
+import { ReactComponent as UpdateIcon } from '../icones/jornal.svg';
+import { ReactComponent as ChatIcon } from '../icones/mensagens.svg';
+import { ReactComponent as VirtualClassIcon } from '../icones/quadro-negro.svg';
+import { ReactComponent as UsersIcon } from '../icones/usuarios.svg';
 import './TelaDeCurso.css';
 import Updates from './Noticias.js'
 import Archives from './Arquivos.js';
@@ -18,23 +23,42 @@ function TelaDeCurso() {
 }
 
 function Sidebar({ activePage, setActivePage }) {
-    const menuItems = [
+    const menu_items = [
         'Arquivos',
         'Noticias', 
         'Chat Geral',
         'Sala Virtual',
         'Participantes'
     ];
+
+    const renderIcon = ({ item }) => {
+        console.log(item);
+        switch(item) {
+            case 'Arquivos':
+                return <ArchiveIcon class='sidebar-icon'/>;
+            case 'Noticias':
+                return <UpdateIcon class='sidebar-icon'/>;
+            case 'Chat Geral':
+                return <ChatIcon class='sidebar-icon'/>;
+            case 'Sala Virtual':
+                return <VirtualClassIcon class='sidebar-icon'/>
+            case 'Participantes':
+                return <UsersIcon class='sidebar-icon'/>
+            default:
+                return <></>;
+        }
+    };
     
     return(
         <div class='sidebar'>
             <div class='sidebar-buttons'>
-                {menuItems.map(item => (
+                {menu_items.map(item => (
                     <button 
                         key={item}
-                        className={`sidebar-btn ${activePage === item ? 'active' : ''}`}
+                        class={`sidebar-btn ${activePage === item ? 'active' : ''}`}
                         onClick={() => setActivePage(item)}
                     >
+                        {renderIcon({item})}
                         {item}
                     </button>
                 ))}

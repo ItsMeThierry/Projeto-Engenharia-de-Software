@@ -1,13 +1,16 @@
 import './App.css';
 import TelaDeCurso from './tela_de_curso/TelaDeCurso.js';
+import { PermissionProvider } from './context/PermissionContext.js';
 
 function App() {
 
   return (
-    <div>
+    <PermissionProvider>
+      <div>
         <Header/>
         <TelaDeCurso/>
-    </div>
+      </div>
+    </PermissionProvider>
   );
 
 }

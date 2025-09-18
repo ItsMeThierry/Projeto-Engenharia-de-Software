@@ -1,3 +1,31 @@
+/* Variáveis de cores */
+:root {
+  --text: #020a13;
+  --background: #fafcff;
+  --primary: #093671;
+  --secondary: #699FE6;
+  --accent: #f07851;
+  
+  /* Variações das cores principais */
+  --primary-light: rgba(9, 54, 113, 0.1);
+  --primary-hover: rgba(9, 54, 113, 0.9);
+  --secondary-light: rgba(105, 159, 230, 0.1);
+  --secondary-hover: rgba(105, 159, 230, 0.9);
+  --accent-light: rgba(240, 120, 81, 0.1);
+  --accent-hover: rgba(240, 120, 81, 0.9);
+  
+  /* Cores neutras baseadas no texto */
+  --text-light: rgba(2, 10, 19, 0.6);
+  --text-lighter: rgba(2, 10, 19, 0.4);
+  --text-lightest: rgba(2, 10, 19, 0.2);
+  --border-color: rgba(2, 10, 19, 0.1);
+  --shadow-color: rgba(2, 10, 19, 0.1);
+  
+  /* Cores de fundo */
+  --bg-light: rgba(250, 252, 255, 0.8);
+  --bg-card: rgba(255, 255, 255, 0.95);
+}
+
 .page {
     display: flex;
     flex-direction: column;
@@ -10,35 +38,35 @@
 .page-top {
     flex-shrink: 0;
     padding: 10px;
-    background-color: #f9f9f9;
+    background-color: var(--bg-light);
 }
 
 .page-bottom {
     flex: 1;
     overflow-y: auto;
     padding: 0 10px;
-    background-color: #ffffff;
+    background-color: var(--background);
 }
 
 /* Recent Update Card */
 .recent-update {
-    background-color: #fff3cd;
+    background-color: var(--accent-light);
     border-radius: 8px;
     padding: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    border-left: 4px solid #ffc107;
+    box-shadow: 0 2px 8px var(--shadow-color);
+    border-left: 4px solid var(--accent);
 }
 
 .recent-update .title h1 {
     margin: 0 0 16px 0;
-    color: #333;
+    color: var(--text);
     font-size: 28px;
     font-weight: bold;
 }
 
 .recent-update .text p {
     margin: 0 0 20px 0;
-    color: #444;
+    color: var(--text);
     font-size: 16px;
     line-height: 1.6;
 }
@@ -51,20 +79,20 @@
 
 .recent-update .owner {
     margin: 0;
-    color: #666;
+    color: var(--text-light);
     font-size: 16px;
     font-weight: 600;
 }
 
 .recent-update .date {
-    color: #888;
+    color: var(--text-lighter);
     font-size: 14px;
 }
 
 /* Update Cards */
 .update {
     padding: 16px 0;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .update:last-child {
@@ -80,26 +108,26 @@
 
 .update-title {
     margin: 0;
-    color: #777;
+    color: var(--primary);
     font-size: 20px;
     font-weight: 600;
 }
 
 .update-text p {
     margin: 0 0 12px 0;
-    color: #888;
+    color: var(--text-light);
     font-size: 14px;
     line-height: 1.5;
 }
 
 .update-owner h4 {
     margin: 0;
-    color: #999;
+    color: var(--text-lighter);
     font-size: 14px;
     font-weight: 500;
 }
 
 .update-date span {
-    color: #aaa;
+    color: var(--text-lightest);
     font-size: 12px;
 }

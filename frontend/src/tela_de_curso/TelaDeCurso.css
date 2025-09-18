@@ -1,3 +1,30 @@
+/* Variáveis de cores */
+:root {
+  --text: #020a13;
+  --background: #fafcff;
+  --primary: #093671;
+  --secondary: #699FE6;
+  --accent: #f07851;
+  
+  /* Variações das cores principais */
+  --primary-light: rgba(9, 54, 113, 0.1);
+  --primary-hover: rgba(9, 54, 113, 0.9);
+  --secondary-light: rgba(105, 159, 230, 0.1);
+  --secondary-hover: rgba(105, 159, 230, 0.9);
+  --accent-light: rgba(240, 120, 81, 0.1);
+  --accent-hover: rgba(240, 120, 81, 0.9);
+  
+  /* Cores neutras baseadas no texto */
+  --text-light: rgba(2, 10, 19, 0.6);
+  --text-lighter: rgba(2, 10, 19, 0.4);
+  --border-color: rgba(2, 10, 19, 0.1);
+  --shadow-color: rgba(2, 10, 19, 0.1);
+  
+  /* Cores de fundo */
+  --bg-light: rgba(250, 252, 255, 0.8);
+  --bg-card: rgba(255, 255, 255, 0.95);
+}
+
 .main-layout {
   display: flex;
   height: calc(100vh - 80px);
@@ -6,8 +33,8 @@
 
 .sidebar {
   width: 280px;
-  background: white;
-  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  background: var(--background);
+  box-shadow: 2px 0 10px var(--shadow-color);
   padding: 2rem 1rem;
   flex-shrink: 0;
   overflow-y: auto;
@@ -20,21 +47,30 @@
 }
 
 .sidebar-btn {
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  background: var(--bg-light);
+  border: 1px solid var(--border-color);
   padding: 1rem 1.5rem;
   border-radius: 8px;
   cursor: pointer;
   text-align: left;
   font-size: 0.95rem;
   transition: all 0.3s ease;
-  color: #495057;
+  color: var(--text-light);
+}
+
+.sidebar-icon {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: var(--text-light);
 }
 
 .sidebar-btn:hover {
-  background: #e9ecef;
-  border-color: #163eec;
-  color: #163eec;
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
   transform: translateX(4px);
 }
 
@@ -61,7 +97,7 @@
 }
 
 .page-title h1 {
-  color: #09366F;
+  color: var(--primary);
   font-weight: 400;
   margin: 0;
 }
