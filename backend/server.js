@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const { createServer } = require('http');
+const { Server } = require('socket.io');
 const createTables = require('./db/createTables');
 
 // Caminho das rotas
@@ -33,10 +35,37 @@ app.get('/', (req, res) => {
 const startServer = async () => {
   try {
     await createTables(); // Criação de todas as tabelas
-    app.listen(PORT, '0.0.0.0', () => {
+
+    // Criação do server HTTP para o Socket.io
+    const httpServer = createServer(app);
+    const io = new Server(httpServer, {
+      cors: {
+        origin: ['http://localhost:3000', 'http://frontend:3000'],
+        methods: ["GET", "POST"],
+        credentials: true
+      }
+    });
+
+    // Configuração do Socket.io
+    io.on('connection', (socket) => {
+      console.log('Usuário conectado:', socket.id);
+
+      socket.on('send_message', (data) => {
+        console.log('Mensagem recebida:', data);
+        io.emit('recieve_message', data);
+      });
+
+      socket.on('disconnect', () => {
+        console.log('Usuário desconectado:', socket.id);
+      });
+    });
+
+    httpServer.listen(PORT, '0.0.0.0', () => {
       console.log(`Servidor rodando na porta ${PORT}`);
+      console.log(`Socket.io disponível na porta ${PORT}`);
       console.log(`API disponível em: http://localhost:${PORT}`);
     });
+
   } catch (error) {
     console.error('Erro ao inicializar servidor:', error);
     process.exit(1);

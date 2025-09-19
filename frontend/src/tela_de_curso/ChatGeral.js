@@ -1,20 +1,47 @@
+import React, { useState, useEffect} from 'react';
+import io from 'socket.io-client'
 import './ChatGeral.css'
 
 function Chat() {
+    const [socket, setSocket] = useState(null);
+    const [messages, setMessages] = useState([]);
+    const [newMesssage, setNewMessage] = useState("");
+
+    useEffect(() => {
+        const newSocket = io('http://localhost:5000');
+        setSocket(newSocket);
+
+        newSocket.on('recieve_message', (data) => {
+            setMessages(prev => [...prev, data]);
+        });
+
+        return () => newSocket.disconnect();
+    }, []);
+
+    const sendMessage = () => {
+        if(socket) {
+            const message_data = {
+                username: 'Nome',
+                text: newMesssage,
+                date: new Date().toLocaleString('pt-BR')
+            }
+
+            socket.emit('send_message', message_data);
+            setNewMessage("");
+        }
+    };
+
     return(
         <div class='page'>
             <div class='chat'>
                 <div class='chat-body'>
-                    <Message username='Usuário' date='xx/xx/xxxx' text='TESTE'/>
-                    <Message username='Usuário' date='xx/xx/xxxx' text='TESTE'/>
-                    <Message username='Usuário' date='xx/xx/xxxx' text='TESTE'/>
-                    <Message username='Usuário' date='xx/xx/xxxx' text='TESTE'/>
-                    <SenderMessage username='Usuário' date='xx/xx/xxxx' text='OLA'/>
-                    <Message username='Usuário' date='xx/xx/xxxx' text='TA TUDO BEM NAOLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'/>
+                    {messages.map((msg, index) => (
+                        <Message key={index} username={msg.username} date={msg.date} text={msg.text}/>
+                    ))}
                 </div>
                 <div class='chat-buttons'>
-                    <input type='text'/>
-                    <button class='send-btn'>+</button>
+                    <input type='text' value={newMesssage} onChange={(e) => {setNewMessage(e.target.value)}} placeholder="Digite sua mensagem..."/>
+                    <button class='send-btn' onClick={sendMessage}>+</button>
                 </div>
             </div>
         </div>
