@@ -48,7 +48,6 @@ const startServer = async () => {
 
     // Configuração do Socket.io
     io.on('connection', (socket) => {
-      console.log('Usuário conectado:', socket.id);
 
       socket.on('send_message', (data) => {
         console.log('Mensagem recebida:', data);
