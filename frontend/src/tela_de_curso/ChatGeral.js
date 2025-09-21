@@ -1,27 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client'
+import React, { useState } from 'react';
+import { usePermissionContext } from '../context/PermissionContext';
 import './ChatGeral.css'
 
-function Chat() {
-    const [socket, setSocket] = useState(null);
-    const [messages, setMessages] = useState([]);
+function Chat({ socket, messages }) {
     const [newMesssage, setNewMessage] = useState("");
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-    useEffect(() => {
-        const newSocket = io('http://localhost:5000');
-        setSocket(newSocket);
-
-        newSocket.on('recieve_message', (data) => {
-            setMessages(prev => [...prev, data]);
-        });
-
-        return () => newSocket.disconnect();
-    }, []);
+    const { user_id } = usePermissionContext();
 
     const sendMessage = () => {
         if(socket) {
             const message_data = {
+                user_id: user_id,
                 username: 'Nome',
                 text: newMesssage,
                 date: new Date().toLocaleString('pt-BR')
@@ -30,6 +20,14 @@ function Chat() {
             socket.emit('send_message', message_data);
             setNewMessage("");
         }
+    };
+
+    const renderMessage = ({ index, msg }) => {
+        if (msg.user_id !== user_id) {
+            return (<Message key={index} username={msg.username} date={msg.date} text={msg.text}/>);
+        }
+
+        return (<SenderMessage key={index} username={msg.username} date={msg.date} text={msg.text}/>);
     };
 
     const toggleSidebar = () => {
@@ -68,9 +66,9 @@ function Chat() {
                         <h1>12 Pessoas Online</h1>
                     </div>
                     <div className='chat-body'>
-                        {messages.map((msg, index) => (
-                            <Message key={index} username={msg.username} date={msg.date} text={msg.text}/>
-                        ))}
+                        {messages.map((msg, index) => 
+                            renderMessage({ index, msg })
+                        )}
                     </div>
                     <div className='chat-buttons'>
                         <input 

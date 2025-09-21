@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ReactComponent as ArchiveIcon } from '../icones/pasta.svg';
 import { ReactComponent as UpdateIcon } from '../icones/jornal.svg';
 import { ReactComponent as ChatIcon } from '../icones/mensagens.svg';
 import { ReactComponent as VirtualClassIcon } from '../icones/quadro-negro.svg';
 import { ReactComponent as UsersIcon } from '../icones/usuarios.svg';
+import io from 'socket.io-client'
 import './TelaDeCurso.css';
 import Updates from './Noticias.js'
 import Archives from './Arquivos.js';
@@ -13,11 +14,24 @@ import UsersList from './Participantes.js';
 
 function TelaDeCurso() {
     const [activePage, setActivePage] = useState('Arquivos');
+    const [socket, setSocket] = useState(null);
+    const [messages, setMessages] = useState([]);
+
+    useEffect(() => {
+        const newSocket = io('http://localhost:5000');
+        setSocket(newSocket);
+    
+        newSocket.on('recieve_message', (data) => {
+            setMessages(prev => [...prev, data]);
+        });
+    
+        return () => newSocket.disconnect();
+    }, []);
 
     return(
         <div class='main-layout'>
             <Sidebar activePage={activePage} setActivePage={setActivePage}/>
-            <CourseContent activePage={activePage}/>
+            <CourseContent activePage={activePage} socket={socket} messages={messages}/>
         </div>
     );
 }
@@ -67,7 +81,7 @@ function Sidebar({ activePage, setActivePage }) {
     );
 }
 
-function CourseContent({ activePage }) {
+function CourseContent({ activePage, socket, messages}) {
     const renderContent = () => {
         switch(activePage) {
             case 'Arquivos':
@@ -75,7 +89,7 @@ function CourseContent({ activePage }) {
             case 'Noticias':
                 return <Updates/>;
             case 'Chat Geral':
-                return <Chat/>
+                return <Chat socket={socket} messages={messages}/>
             case 'Sala Virtual':
                 return <VirtualClassroom/>;
             case 'Participantes':
