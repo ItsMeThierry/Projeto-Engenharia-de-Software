@@ -17,18 +17,26 @@ function UsersList() {
         };
     };
 
+    const users = [
+        {
+            nome: "Nome 1",
+            email: "nome1@email.com"
+        },
+        {
+            nome: "Nome 2",
+            email: "nome2@email.com"
+        },
+        {
+            nome: "Nome 3",
+            email: "nome3@email.com"
+        }
+    ];
+
     return(
         <div class='page'>
             {renderListConfig({user_type})}
             <div class='users-list'>
-                <UserCard name='Nome 1' email='nome1@email.com'/>
-                <UserCard name='Nome 2' email='nome2@email.com'/>
-                <UserCard name='Nome 3' email='nome3@email.com'/>
-                <UserCard name='Nome 4' email='nome4@email.com'/>
-                <UserCard name='Nome 1' email='nome1@email.com'/>
-                <UserCard name='Nome 2' email='nome2@email.com'/>
-                <UserCard name='Nome 3' email='nome3@email.com'/>
-                <UserCard name='Nome 4' email='nome4@email.com'/>
+                {users.map(u => (<UserCard name={u.nome} email={u.email}/>))}
             </div>
         </div>
     );
