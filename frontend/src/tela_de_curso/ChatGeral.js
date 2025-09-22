@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { usePermissionContext } from '../context/PermissionContext';
 import './ChatGeral.css'
 
-function Chat({ socket, messages }) {
+function Chat({ socket, messages, onlineUsers }) {
     const [newMesssage, setNewMessage] = useState("");
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -40,18 +40,9 @@ function Chat({ socket, messages }) {
                 <div className={`chat-sidebar ${isSidebarOpen ? 'open' : ''}`}>
                     <h1>Participantes Online</h1>
                     <div className='chat-online-list'>
-                        <OnlineUser name='João Silva'/>
-                        <OnlineUser name='Maria Santos'/>
-                        <OnlineUser name='Pedro Costa'/>
-                        <OnlineUser name='Ana Oliveira'/>
-                        <OnlineUser name='Carlos Lima'/>
-                        <OnlineUser name='Julia Ferreira'/>
-                        <OnlineUser name='Roberto Alves'/>
-                        <OnlineUser name='Fernanda Rocha'/>
-                        <OnlineUser name='Gabriel Souza'/>
-                        <OnlineUser name='Beatriz Cunha'/>
-                        <OnlineUser name='Lucas Martins'/>
-                        <OnlineUser name='Camila Dias'/>
+                        {onlineUsers.map((users, index) => (
+                            <OnlineUser name='Nome'/>
+                        ))}
                     </div>
                 </div>
 

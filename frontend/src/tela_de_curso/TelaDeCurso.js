@@ -4,6 +4,7 @@ import { ReactComponent as UpdateIcon } from '../icones/jornal.svg';
 import { ReactComponent as ChatIcon } from '../icones/mensagens.svg';
 import { ReactComponent as VirtualClassIcon } from '../icones/quadro-negro.svg';
 import { ReactComponent as UsersIcon } from '../icones/usuarios.svg';
+import { usePermissionContext } from '../context/PermissionContext';
 import io from 'socket.io-client'
 import './TelaDeCurso.css';
 import Updates from './Noticias.js'
@@ -16,22 +17,39 @@ function TelaDeCurso() {
     const [activePage, setActivePage] = useState('Arquivos');
     const [socket, setSocket] = useState(null);
     const [messages, setMessages] = useState([]);
+    const [onlineUsers, setOnlineUsers] = useState([]);
+
+    const { user_id } = usePermissionContext();
 
     useEffect(() => {
         const newSocket = io('http://localhost:5000');
         setSocket(newSocket);
+
+        const room_data = {
+            room_id: 1,
+            user_id: user_id
+        }
+
+        newSocket.emit('joined_room', room_data);
+
+        newSocket.on('update_rooms', (data) => {
+            setOnlineUsers(data);
+        });
     
         newSocket.on('recieve_message', (data) => {
             setMessages(prev => [...prev, data]);
         });
     
-        return () => newSocket.disconnect();
-    }, []);
+        return () => {
+            newSocket.emit('left_room', room_data);
+            newSocket.disconnect();
+        };
+    }, [user_id]);
 
     return(
         <div class='main-layout'>
             <Sidebar activePage={activePage} setActivePage={setActivePage}/>
-            <CourseContent activePage={activePage} socket={socket} messages={messages}/>
+            <CourseContent activePage={activePage} socket={socket} messages={messages} onlineUsers={onlineUsers}/>
         </div>
     );
 }
@@ -81,7 +99,7 @@ function Sidebar({ activePage, setActivePage }) {
     );
 }
 
-function CourseContent({ activePage, socket, messages}) {
+function CourseContent({ activePage, socket, messages, onlineUsers }) {
     const renderContent = () => {
         switch(activePage) {
             case 'Arquivos':
@@ -89,7 +107,7 @@ function CourseContent({ activePage, socket, messages}) {
             case 'Noticias':
                 return <Updates/>;
             case 'Chat Geral':
-                return <Chat socket={socket} messages={messages}/>
+                return <Chat socket={socket} messages={messages} onlineUsers={onlineUsers}/>
             case 'Sala Virtual':
                 return <VirtualClassroom/>;
             case 'Participantes':
