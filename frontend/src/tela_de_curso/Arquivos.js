@@ -117,7 +117,6 @@ function ContentGroup({title, description, contents}) {
     };
 
     const renderListConfig = ({ user_type }) => {
-        console.log(user_type);
         if(user_type === 'monitor'){
             return(
                 <div class='content-list-config'>

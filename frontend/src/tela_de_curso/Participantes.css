@@ -1,0 +1,109 @@
+:root {
+  --text: #020a13;
+  --background: #fafcff;
+  --primary: #093671;
+  --secondary: #699FE6;
+  --accent: #f07851;
+  
+  /* Variações das cores principais */
+  --primary-light: rgba(9, 54, 113, 0.1);
+  --primary-hover: rgba(9, 54, 113, 0.9);
+  --secondary-light: rgba(105, 159, 230, 0.1);
+  --secondary-hover: rgba(105, 159, 230, 0.9);
+  --accent-light: rgba(240, 120, 81, 0.1);
+  --accent-hover: rgba(240, 120, 81, 0.9);
+  
+  /* Cores neutras baseadas no texto */
+  --text-light: rgba(2, 10, 19, 0.6);
+  --text-lighter: rgba(2, 10, 19, 0.4);
+  --border-color: rgba(2, 10, 19, 0.1);
+  --shadow-color: rgba(2, 10, 19, 0.1);
+  --shadow-hover: rgba(2, 10, 19, 0.15);
+  
+  /* Cores de estado */
+  --success: #28a745;
+  --success-hover: #218838;
+  --success-light: rgba(40, 167, 69, 0.2);
+  --danger: #dc3545;
+  --danger-hover: #c82333;
+  --danger-light: rgba(220, 53, 69, 0.2);
+  
+  /* Cores de fundo */
+  --bg-light: rgba(250, 252, 255, 0.8);
+  --bg-card: rgba(255, 255, 255, 0.95);
+}
+
+.users-list-config {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  padding-bottom: 15px;
+}
+
+.add-usr-btn,
+.remove-usr-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 400;
+  transition: all 0.2s ease;
+  min-width: 40px;
+  height: 36px;
+}
+
+.add-usr-btn {
+  background: var(--success);
+  color: var(--background);
+}
+
+.add-usr-btn:hover {
+  background: var(--success-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px var(--success-light);
+}
+
+.remove-usr-btn {
+  background: var(--danger);
+  color: var(--background);
+}
+
+.remove-usr-btn:hover {
+  background: var(--danger-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px var(--danger-light);
+}
+
+.add-usr-icon,
+.remove-usr-icon {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: var(--background);
+}
+
+
+.user-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  background: var(--secondary);
+  width: 100%;
+  max-width: 800px;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+
+.user-card h1 {
+  color: var(--background);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.user-card span {
+  color: var(--background);
+}
