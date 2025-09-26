@@ -13,7 +13,7 @@ export const usePermissionContext = () => {
 };
 
 export const PermissionProvider = ({ children }) => {
-    const [username, setUsername] = useState(null);
+    const [username, setUsername] = useState('ADMINISTRADOR');
     const [user_id, setUserId] = useState(-1);
     const [user_type, setUserType] = useState('monitor');
 

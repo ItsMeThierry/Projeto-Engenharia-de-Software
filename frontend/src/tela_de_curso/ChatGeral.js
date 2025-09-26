@@ -6,13 +6,13 @@ function Chat({ socket, messages, onlineUsers }) {
     const [newMesssage, setNewMessage] = useState("");
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-    const { user_id } = usePermissionContext();
+    const { username, user_id } = usePermissionContext();
 
     const sendMessage = () => {
         if(socket) {
             const message_data = {
                 user_id: user_id,
-                username: 'Nome',
+                username: username,
                 text: newMesssage,
                 date: new Date().toLocaleString('pt-BR')
             }
@@ -54,7 +54,7 @@ function Chat({ socket, messages, onlineUsers }) {
                         >
                             +
                         </button>
-                        <h1>12 Pessoas Online</h1>
+                        <h1>{onlineUsers.length} { onlineUsers.length === 1 ? 'Pessoa' : 'Pessoas' } Online</h1>
                     </div>
                     <div className='chat-body'>
                         {messages.map((msg, index) => 
