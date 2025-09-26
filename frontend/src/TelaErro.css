@@ -1,0 +1,64 @@
+:root {
+  --text: #020a13;
+  --background: #fafcff;
+  --primary: #093671;
+  --secondary: #699FE6;
+  --accent: #f07851;
+  
+  /* Variações das cores principais */
+  --primary-light: rgba(9, 54, 113, 0.1);
+  --primary-hover: rgba(9, 54, 113, 0.9);
+  --secondary-light: rgba(105, 159, 230, 0.1);
+  --secondary-hover: rgba(105, 159, 230, 0.9);
+  --accent-light: rgba(240, 120, 81, 0.1);
+  --accent-hover: rgba(240, 120, 81, 0.9);
+  
+  /* Cores neutras baseadas no texto */
+  --text-light: rgba(2, 10, 19, 0.6);
+  --text-lighter: rgba(2, 10, 19, 0.4);
+  --border-color: rgba(2, 10, 19, 0.1);
+  --shadow-color: rgba(2, 10, 19, 0.1);
+  
+  /* Cores de fundo */
+  --bg-light: rgba(250, 252, 255, 0.8);
+  --bg-card: rgba(255, 255, 255, 0.95);
+}
+
+.error-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+  box-sizing: border-box;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--background);
+}
+
+.error-card {
+  background-color: var(--bg-card);
+  border-radius: 8px;
+  padding: 32px 40px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+.error-card h1 {
+  color: var(--primary);
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0 0 20px 0;
+  letter-spacing: 2px;
+}
+
+.error-card span {
+  color: var(--text-light);
+  font-size: 1.1rem;
+  line-height: 1.5;
+  display: block;
+  margin: 0;
+}

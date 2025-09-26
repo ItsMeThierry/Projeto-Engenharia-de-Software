@@ -5,13 +5,63 @@ import { ReactComponent as RemoveFileIcon } from '../icones/excluir-documento.sv
 import './Arquivos.css';
 
 function Archives() {
+    const content_groups = [
+        {
+            title: "Circuito RC",
+            description: "Nesse conteúdo vemos o circuito RC, suas fórmulas e utilidades como filtros",
+            contents: [
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }
+            ]
+        },
+        {
+            title: "Circuito RC",
+            description: "Nesse conteúdo vemos o circuito RC, suas fórmulas e utilidades como filtros",
+            contents: [
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }
+            ]
+        },
+        {
+            title: "Circuito RC",
+            description: "Nesse conteúdo vemos o circuito RC, suas fórmulas e utilidades como filtros",
+            contents: [
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }
+            ]
+        },
+        {
+            title: "Circuito RC",
+            description: "Nesse conteúdo vemos o circuito RC, suas fórmulas e utilidades como filtros",
+            contents: [
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, 
+                { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }
+            ]
+        }
+    ];
     return (
         <div class='page'>
-            <ContentGroup title='Circuito RC' description='Nesse conteúdo vemos o circuito RC, suas fórmulas e utilidades como filtros' contents={[{ name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }, { name: "Exercícios Práticos", type: "pdf", size: "3 MB" }]}/>
-            <ContentGroup title='Circuito RC' description='Nesse conteúdo vemos o circuito RC, suas fórmulas e utilidades como filtros' contents={[{ name: "Exercícios Práticos", type: "pdf", size: "3 MB" }]}/>
-            <ContentGroup title='Circuito RC' description='Nesse conteúdo vemos o circuito RC, suas fórmulas e utilidades como filtros' contents={[{ name: "Exercícios Práticos", type: "pdf", size: "3 MB" }]}/>        
-            <ContentGroup title='Circuito RC' description='Nesse conteúdo vemos o circuito RC, suas fórmulas e utilidades como filtros' contents={[{ name: "Exercícios Práticos", type: "pdf", size: "3 MB" }]}/>        
-            <ContentGroup title='Circuito RC' description='Nesse conteúdo vemos o circuito RC, suas fórmulas e utilidades como filtros' contents={[{ name: "Exercícios Práticos", type: "pdf", size: "3 MB" }]}/>        
+            {content_groups.map(group => (<ContentGroup title={group.title} description={group.description} contents={group.contents}/>))}
         </div>
     );
 }
@@ -117,7 +167,6 @@ function ContentGroup({title, description, contents}) {
     };
 
     const renderListConfig = ({ user_type }) => {
-        console.log(user_type);
         if(user_type === 'monitor'){
             return(
                 <div class='content-list-config'>
@@ -152,29 +201,27 @@ function ContentGroup({title, description, contents}) {
                     </div>
                 </div>
 
-                {isExpanded && (
-                    <div class='content-group-body'>
-                        <div class='content-description'>
-                            <p>{description}</p>
-                        </div>
-
-                        <div class='content-list'>
-                            {contents.map((content, index) => (
-                                <div key={index} class='content-card'>
-                                    <div class='content-icon'>
-                                        📄
-                                    </div>
-                                    <div class='content-info'>
-                                        <h4>{content.name}</h4>
-                                        <span class='content-meta'>{content.size}</span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-
-                        {renderListConfig({user_type})}
+                <div class={`content-group-body ${isExpanded ? 'open' : ''}`}>
+                    <div class='content-description'>
+                        <p>{description}</p>
                     </div>
-                )}
+
+                    <div class='content-list'>
+                        {contents.map((content, index) => (
+                            <div key={index} class='content-card'>
+                                <div class='content-icon'>
+                                    📄
+                                </div>
+                                <div class='content-info'>
+                                    <h4>{content.name}</h4>
+                                    <span class='content-meta'>{content.size}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {renderListConfig({user_type})}
+                </div>
             </div>
 
             {/* Overlay de Confirmação de Upload */}

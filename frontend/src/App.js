@@ -1,30 +1,49 @@
-import './App.css';
-import TelaDeCurso from './tela_de_curso/TelaDeCurso.js';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { PermissionProvider } from './context/PermissionContext.js';
+import TelaDeCurso from './tela_de_curso/TelaDeCurso.js';
+import TelaDashboard from './tela_dashboard/TelaDashboard.js';
+import TelaLogin from './tela_login/TelaLogin.js';
+import TelaErro from './TelaErro.js';
+import './App.css';
 
 function App() {
-
   return (
     <PermissionProvider>
-      <div>
-        <Header/>
-        <TelaDeCurso/>
-      </div>
+      <Router>
+        <div className="app-container">
+          <Routes>
+            <Route path="/login" element={<TelaLogin />} />
+            
+            <Route path="/*" element={
+              <>
+                <Header />
+                <main className="main-content">
+                  <Routes>
+                    <Route path="/" element={<TelaDashboard />} />
+                    <Route path="/curso/:id" element={<TelaDeCurso />} />
+
+                    <Route path="*" element={<TelaErro />} />
+                  </Routes>
+                </main>
+              </>
+            } />
+          </Routes>
+        </div>
+      </Router>
     </PermissionProvider>
   );
-
 }
 
 function Header() {
   return (
-    <div class='header'>
-      <div class='header-left'>
-        <div class='home-btn'>Menu</div>
+    <div className='header'>
+      <div className='header-left'>
+        <div className='home-btn'>Menu</div>
       </div>
-      <div class='header-right'>
-        <div class='perfil'>
+      <div className='header-right'>
+        <div className='perfil'>
           <label>SEU NOME</label>
-          <div class='avatar'>👤</div>
+          <div className='avatar'>👤</div>
         </div>
       </div>
     </div>
