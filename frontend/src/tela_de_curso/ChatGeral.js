@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { usePermissionContext } from '../context/PermissionContext';
 import './ChatGeral.css'
 
 function Chat({ socket, messages, onlineUsers }) {
     const [newMesssage, setNewMessage] = useState("");
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
+    const { id } = useParams();
+    
     const { username, user_id } = usePermissionContext();
+    console.log(id);
 
     const sendMessage = () => {
         if(socket) {
             const message_data = {
+                room_id: parseInt(id),
                 user_id: user_id,
                 username: username,
                 text: newMesssage,

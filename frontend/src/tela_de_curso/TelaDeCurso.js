@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { ReactComponent as ArchiveIcon } from '../icones/pasta.svg';
 import { ReactComponent as UpdateIcon } from '../icones/jornal.svg';
 import { ReactComponent as ChatIcon } from '../icones/mensagens.svg';
@@ -18,15 +19,17 @@ function TelaDeCurso() {
     const [socket, setSocket] = useState(null);
     const [messages, setMessages] = useState([]);
     const [onlineUsers, setOnlineUsers] = useState([]);
-
+    const { id } = useParams();
     const { user_id } = usePermissionContext();
 
+    console.log(id);
+    
     useEffect(() => {
         const newSocket = io('http://localhost:5000');
         setSocket(newSocket);
 
         const room_data = {
-            room_id: 1,
+            room_id: parseInt(id),
             user_id: user_id
         }
 
@@ -44,7 +47,7 @@ function TelaDeCurso() {
             newSocket.emit('left_room', room_data);
             newSocket.disconnect();
         };
-    }, [user_id]);
+    }, [user_id, id]);
 
     return(
         <div class='main-layout'>
