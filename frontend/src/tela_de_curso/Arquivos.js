@@ -406,29 +406,27 @@ function ContentGroup({ group, onEdit }) {
                     </div>
                 </div>
 
-                {isExpanded && (
-                    <div className='content-group-body'>
-                        <div className='content-description'>
-                            <p>{group.description}</p>
-                        </div>
-
-                        <div className='content-list'>
-                            {group.contents.map((content, index) => (
-                                <div key={content.id} className='content-card'>
-                                    <div className='content-icon'>
-                                        📄
-                                    </div>
-                                    <div className='content-info'>
-                                        <h4>{content.name}</h4>
-                                        <span className='content-meta'>{content.size}</span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-
-                        {renderListConfig()}
+                <div className={`content-group-body ${isExpanded ? 'open' : ''}`}>
+                    <div className='content-description'>
+                        <p>{group.description}</p>
                     </div>
-                )}
+
+                    <div className='content-list'>
+                        {group.contents.map((content, index) => (
+                            <div key={content.id} className='content-card'>
+                                <div className='content-icon'>
+                                    📄
+                                </div>
+                                <div className='content-info'>
+                                    <h4>{content.name}</h4>
+                                    <span className='content-meta'>{content.size}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {renderListConfig()}
+                </div>
             </div>
 
             {/* Overlay de Confirmação de Upload */}
