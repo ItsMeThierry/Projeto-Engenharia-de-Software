@@ -17,23 +17,46 @@ router.get('/', async (req, res) => {
      }
 });
 
-// POST /api/modulos     =     Criar um novo módulo
+// POST /api/modulos     =     Criar um novo módulo (aceita curso_id ou course_name)
 router.post('/', async (req, res) => {
-     const { curso_id, nome, descricao } = req.body;
-     if (!curso_id || !nome) {
-          return res.status(400).json({ error: 'O curso e o nome do módulo são obrigatórios' });
-     }
+    try {
+        let { curso_id, course_name, nome, descricao } = req.body;
 
-     try {
-          const result = await pool.query(
-               'INSERT INTO Modulos (curso_id, nome, descricao) VALUES ($1, $2, $3) RETURNING *',
-               [curso_id, nome, descricao || null]
-          );
-          res.status(201).json(result.rows[0]);
-     } catch (error) {
-          res.status(500).json({ error: 'Erro ao criar módulo', details: error.message });
-     }
+        if (!nome) {
+            return res.status(400).json({ error: 'O nome do módulo é obrigatório' });
+        }
+
+        // Se curso_id não for fornecido, buscar pelo nome do curso
+        if (!curso_id && course_name) {
+            const cursoResult = await pool.query(
+                'SELECT ID_curso FROM Cursos WHERE nome=$1',
+                [course_name]
+            );
+
+            if (cursoResult.rowCount === 0) {
+                return res.status(404).json({ error: `Curso "${course_name}" não encontrado` });
+            }
+
+            curso_id = cursoResult.rows[0].id_curso;
+        }
+
+        // Validação final
+        if (!curso_id) {
+            return res.status(400).json({ error: 'É necessário fornecer curso_id ou course_name válido' });
+        }
+
+        // Inserção do módulo
+        const result = await pool.query(
+            'INSERT INTO Modulos (curso_id, nome, descricao) VALUES ($1, $2, $3) RETURNING *',
+            [curso_id, nome, descricao || null]
+        );
+
+        res.status(201).json({ message: 'Módulo criado com sucesso', modulo: result.rows[0] });
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao criar módulo', details: error.message });
+    }
 });
+
 
 // DELETE /api/modulos/:id     =     Deletar um módulo pelo ID
 router.delete('/:id', async (req, res) => {

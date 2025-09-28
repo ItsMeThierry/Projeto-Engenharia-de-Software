@@ -19,6 +19,33 @@ router.get('/', async (req, res) => {
      }
 });
 
+// GET /api/usuarios-em-curso/:curso_id/participantes     =     Listar participantes de um curso, pelo ID do curso
+router.get('/:curso_id/participantes', async (req, res) => {
+  const { curso_id } = req.params;
+
+  try {
+    const result = await pool.query(
+      `
+      SELECT u.nome, u.email, u.cargo
+      FROM UsuariosEmCurso uc
+      INNER JOIN Usuarios u ON uc.usuario_id = u.ID
+      WHERE uc.curso_id = $1
+      ORDER BY u.nome ASC
+      `,
+      [curso_id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Nenhum participante encontrado para este curso' });
+    }
+
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar participantes', details: error.message });
+  }
+});
+
+
 // POST /api/usuarios-em-curso     =     Adicionar um usuário a um curso
 router.post('/', async (req, res) => {
      const { usuario_id, curso_id } = req.body;
