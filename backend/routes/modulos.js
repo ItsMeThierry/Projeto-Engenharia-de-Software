@@ -17,6 +17,29 @@ router.get('/', async (req, res) => {
      }
 });
 
+// GET /api/modulos/curso/:curso_id     =     Listar módulos por curso_id
+router.get('/curso/:curso_id', async (req, res) => {
+     const { curso_id } = req.params;
+
+     try {
+          const result = await pool.query(`
+               SELECT m.ID_modulo, m.nome, m.descricao, m.curso_id, c.nome AS curso_nome
+               FROM Modulos m
+               JOIN Cursos c ON m.curso_id = c.ID_curso
+               WHERE m.curso_id = $1
+               ORDER BY m.ID_modulo ASC
+          `, [curso_id]);
+
+          if (result.rows.length === 0) {
+               return res.status(404).json({ error: 'Nenhum módulo encontrado para este curso' });
+          }
+
+          res.json(result.rows);
+     } catch (error) {
+          res.status(500).json({ error: 'Erro ao buscar módulos do curso', details: error.message });
+     }
+});
+
 // POST /api/modulos     =     Criar um novo módulo (aceita curso_id ou course_name)
 router.post('/', async (req, res) => {
     try {

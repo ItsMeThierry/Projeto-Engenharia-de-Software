@@ -27,8 +27,6 @@ const create_user = async (name, email, type) => {
     }
 }
 
-
-
 // Usuários Em Curso
 const get_participants =  async (id_course) => {
     try {
@@ -83,18 +81,39 @@ const remove_course = async (id_course) => {
     }
 }
 
+const is_course_real = async (id_course) => {
+    try {
+        const response = await fetch(`http://localhost:5000/api/cursos/${id_course}`);
+        
+        if (response.status === 404) {
+            return false;
+        }
+        
+        if (response.ok) {
+            const data = await response.json();
+            return data !== null && data !== undefined;
+        }
+        
+        return false;
+    } catch (e) {
+        console.error(e);
+        return false;
+    }
+}
+
 // Grupos de Arquivo
 const get_content_groups = async (id_course) => {
     try{
-        const response = await fetch(`http://localhost:5000/api/modulos/${id_course}/grupos`);
+        const response = await fetch(`http://localhost:5000/api/modulos/curso/${id_course}`);
         const data = await response.json();
+        data.map(group => group.contents = []); // TODO: RETIRAR QUANDO IMPLEMENTAR O ARMAZENAMENTO DE ARQUIVOS
         return data;
     } catch (e) {
         console.error(e);
     }
 }
 
-const create_content_group = async (name, description, course_name) => {
+const create_content_group = async (name, description, id_course) => {
     try{
         const response = await fetch(`http://localhost:5000/api/modulos`, {
             method: 'POST',
@@ -102,7 +121,7 @@ const create_content_group = async (name, description, course_name) => {
             body: JSON.stringify({
                 nome: name,
                 descricao: description,
-                course_name: course_name
+                curso_id: id_course
             }),
         });
         const data = await response.json();
@@ -112,31 +131,22 @@ const create_content_group = async (name, description, course_name) => {
     }
 }
 
-const edit_content_group = async (id_group, type, modified) => {
-    let send = {};
-
-    switch(type){
-        case 'nome':
-            send = {nome: modified, descricao: undefined};
-            break;
-        case 'descricao':
-            send = {nome: undefined, descricao: modified};
-            break;
-        default:
-            send = {nome: undefined, descricao: undefined};
-    }
-
+const edit_content_group = async (id_group, name, description) => {
     try{
         const response = await fetch(`http://localhost:5000/api/modulos/${id_group}`, {
             method: 'PATCH',
             headers: {'Content-Type': 'application/json',},
-            body: JSON.stringify(send),
+            body: JSON.stringify({
+                nome: name,
+                descricao: description
+            }),
         });
 
         const data = await response.json();
         
         if (response.ok) {
-            console.log('Sucesso');
+            console.log(`Grupo editado ${name} com sucesso`);
+            return data;
         } else {
             console.log(`Erro ${data.error}`);
         }
@@ -171,6 +181,7 @@ module.exports = {
     remove_user_course,
     add_course,
     remove_course,
+    is_course_real,
     get_content_groups,
     create_content_group,
     edit_content_group,

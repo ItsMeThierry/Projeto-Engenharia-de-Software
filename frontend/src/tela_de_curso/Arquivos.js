@@ -1,46 +1,18 @@
-import React, { useState, useRef } from 'react';
-import { usePermissionContext } from '../context/PermissionContext';
+import React, { useState, useRef, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { usePermissionContext } from '../context/PermissionContext.js';
 import { ReactComponent as AddIcon } from '../icones/adicionar-documento.svg';
 import { ReactComponent as RemoveFileIcon } from '../icones/excluir-documento.svg';
-import { ReactComponent as EditIcon } from '../icones/editar.svg'; // Assumindo que existe este ícone
+import { ReactComponent as EditIcon } from '../icones/editar.svg';
 import { ReactComponent as AddFolderIcon } from '../icones/pasta.svg';
 import { ReactComponent as RemoveFolderIcon } from '../icones/remover-pasta.svg';
 import './Arquivos.css';
+import '../api/requests.js';
+import { get_content_groups, create_content_group, edit_content_group, delete_content_group } from '../api/requests.js';
 
 function Archives() {
-    const [groups, setGroups] = useState([
-        {
-            id: 1,
-            title: 'Circuito RC',
-            description: 'Nesse conteúdo vemos o circuito RC, suas fórmulas e utilidades como filtros',
-            contents: [
-                { id: 1, name: "Exercícios Práticos", type: "pdf", size: "3 MB" },
-                { id: 2, name: "Exercícios Práticos", type: "pdf", size: "3 MB" },
-                { id: 3, name: "Exercícios Práticos", type: "pdf", size: "3 MB" },
-                { id: 4, name: "Exercícios Práticos", type: "pdf", size: "3 MB" },
-                { id: 5, name: "Exercícios Práticos", type: "pdf", size: "3 MB" },
-                { id: 6, name: "Exercícios Práticos", type: "pdf", size: "3 MB" },
-                { id: 7, name: "Exercícios Práticos", type: "pdf", size: "3 MB" }
-            ]
-        },
-        {
-            id: 2,
-            title: 'Leis de Kirchhoff',
-            description: 'Estudo das leis fundamentais de circuitos elétricos',
-            contents: [
-                { id: 8, name: "Teoria Básica", type: "pdf", size: "2 MB" },
-                { id: 9, name: "Exemplos Práticos", type: "pdf", size: "1.5 MB" }
-            ]
-        },
-        {
-            id: 3,
-            title: 'Análise de Malhas',
-            description: 'Métodos para análise de circuitos complexos usando malhas',
-            contents: [
-                { id: 10, name: "Material Teórico", type: "pdf", size: "4 MB" }
-            ]
-        }
-    ]);
+    const [groups, setGroups] = useState([]);
+    const { id } = useParams();
 
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
@@ -52,19 +24,44 @@ function Archives() {
 
     const { user_type } = usePermissionContext();
 
-    // Funções para criar grupo
-    const handleCreateGroup = (groupData) => {
-        const newGroup = {
-            id: Date.now(), // Substituir por ID do banco futuramente
-            title: groupData.title,
-            description: groupData.description,
-            contents: []
+    useEffect(() => {
+        const fetchGroups = async () => {
+            try {
+                const data = await get_content_groups(id);
+                setGroups(data);
+            } catch (e) {
+                console.error(e);
+            }
         };
-        setGroups(prev => [...prev, newGroup]);
-        setShowCreateModal(false);
-        
-        // TODO: Implementar request para o banco de dados
-        console.log('Criando grupo no banco:', newGroup);
+
+        fetchGroups();
+    }, [id]);
+
+    // Funções para criar grupo
+    const handleCreateGroup = async (groupData) => {
+        try{
+            const result = await create_content_group(
+                groupData.title,
+                groupData.description,
+                id
+            );
+
+            if (result && result.modulo){
+                const newGroup = {
+                    id_modulo: result.modulo.id_modulo,
+                    nome: groupData.title,
+                    descricao: groupData.description,
+                    contents: []
+                };
+
+                setGroups(prev => [...prev, newGroup]);
+                setShowCreateModal(false);
+            } else {
+                console.error('Erro ao criar o grupo: ' , result);
+            }
+        } catch (e) {
+            console.error('Erro ao criar grupo: ', e);
+        }
     };
 
     // Funções para editar grupo
@@ -73,17 +70,28 @@ function Archives() {
         setShowEditModal(true);
     };
 
-    const handleUpdateGroup = (groupData) => {
-        setGroups(prev => prev.map(group => 
-            group.id === editingGroup.id 
-                ? { ...group, title: groupData.title, description: groupData.description }
-                : group
-        ));
-        setShowEditModal(false);
-        setEditingGroup(null);
-        
-        // TODO: Implementar request para o banco de dados
-        console.log('Atualizando grupo no banco:', { id: editingGroup.id, ...groupData });
+    const handleUpdateGroup = async (groupData) => {
+        try {
+            const result = await edit_content_group(
+                editingGroup.id_modulo,
+                groupData.nome,
+                groupData.descricao
+            );
+
+            if (result && result.modulo) {
+                setGroups(prev => prev.map(group => 
+                    group.id_modulo === editingGroup.id_modulo 
+                        ? { ...group, nome: groupData.nome, descricao: groupData.descricao }
+                        : group
+                ));
+                setShowEditModal(false);
+                setEditingGroup(null);
+            } else {
+                console.error('Erro ao atualizar o grupo: ', result);
+            }
+        } catch (e) {
+            console.error('Erro ao atualizar grupo: ', e);
+        }
     };
 
     // Funções para remover grupos
@@ -103,20 +111,26 @@ function Archives() {
     const handleConfirmRemoveSelection = () => {
         if (selectedForRemoval.length === 0) return;
         
-        const groupsToRemoveList = groups.filter(group => selectedForRemoval.includes(group.id));
+        const groupsToRemoveList = groups.filter(group => selectedForRemoval.includes(group.id_modulo));
         setGroupsToRemove(groupsToRemoveList);
         setShowRemoveModal(false);
         setShowRemoveConfirmation(true);
     };
 
-    const handleConfirmRemove = () => {
-        setGroups(prev => prev.filter(group => !selectedForRemoval.includes(group.id)));
-        setShowRemoveConfirmation(false);
-        setGroupsToRemove([]);
-        setSelectedForRemoval([]);
-        
-        // TODO: Implementar request para o banco de dados
-        console.log('Removendo grupos do banco:', selectedForRemoval);
+    const handleConfirmRemove = async () => {
+        try {
+            const deletePromises = selectedForRemoval.map(groupId => delete_content_group(groupId));
+            
+            await Promise.all(deletePromises);
+            
+            setGroups(prev => prev.filter(group => !selectedForRemoval.includes(group.id_modulo)));
+            setShowRemoveConfirmation(false);
+            setGroupsToRemove([]);
+            setSelectedForRemoval([]);
+            
+        } catch (e) {
+            console.error('Erro ao remover grupos do banco:', e);
+        }
     };
 
     const handleCancelRemoveSelection = () => {
@@ -151,7 +165,7 @@ function Archives() {
     return (
         <div className='page'>
             {renderGroupManagementControls()}
-            
+
             {groups.map(group => (
                 <ContentGroup 
                     key={group.id}
@@ -190,15 +204,15 @@ function Archives() {
                         
                         <div className='file-list-confirmation'>
                             {groups.map((group) => (
-                                <div key={group.id} className='file-item-with-checkbox'>
+                                <div key={group.id_modulo} className='file-item-with-checkbox'>
                                     <input 
                                         type="checkbox"
                                         className='file-checkbox'
-                                        checked={selectedForRemoval.includes(group.id)}
-                                        onChange={(e) => handleGroupRemovalSelection(group.id, e.target.checked)}
+                                        checked={selectedForRemoval.includes(group.id_modulo)}
+                                        onChange={(e) => handleGroupRemovalSelection(group.id_modulo, e.target.checked)}
                                     />
                                     <div className='file-info'>
-                                        <span className='file-name'>{group.title}</span>
+                                        <span className='file-name'>{group.nome}</span>
                                         <span className='file-size'>{group.contents.length} arquivo(s)</span>
                                     </div>
                                 </div>
@@ -231,7 +245,7 @@ function Archives() {
                             {groupsToRemove.map((group) => (
                                 <div key={group.id} className='file-item'>
                                     <div className='file-info'>
-                                        <span className='file-name'>{group.title}</span>
+                                        <span className='file-name'>{group.nome}</span>
                                         <span className='file-size'>{group.contents.length} arquivo(s)</span>
                                     </div>
                                 </div>
@@ -322,13 +336,14 @@ function ContentGroup({ group, onEdit }) {
         setSelectedForRemoval([]);
     };
 
-    const handleCheckboxChange = (index, isChecked) => {
+    const handleCheckboxChange = (contentId, isChecked) => {
         if (isChecked) {
-            setSelectedForRemoval(prev => [...prev, index]);
+            setSelectedForRemoval(prev => [...prev, contentId]);
         } else {
-            setSelectedForRemoval(prev => prev.filter(i => i !== index));
+            setSelectedForRemoval(prev => prev.filter(id => id !== contentId));
         }
     };
+
 
     const handleCancelRemoveSelection = () => {
         setShowRemoveSelection(false);
@@ -338,7 +353,9 @@ function ContentGroup({ group, onEdit }) {
     const handleConfirmRemoveSelection = () => {
         if (selectedForRemoval.length === 0) return;
         
-        const filesToRemoveList = selectedForRemoval.map(index => group.contents[index]);
+        const filesToRemoveList = group.contents.filter(content => 
+            selectedForRemoval.includes(content.id)
+        );
         setFilesToRemove(filesToRemoveList);
         setShowRemoveSelection(false);
         setShowRemoveConfirmation(true);
@@ -396,7 +413,7 @@ function ContentGroup({ group, onEdit }) {
             <div className='content-group'>
                 <div className='content-header'>
                     <div className='content-group-info'>
-                        <h3 className='content-group-title'>{group.title}</h3>
+                        <h3 className='content-group-title'>{group.nome}</h3>
                         <div className='header-controls'>
                             {renderGroupControls()}
                             <button className='expand-btn' onClick={() => setIsExpanded(!isExpanded)}>
@@ -408,9 +425,10 @@ function ContentGroup({ group, onEdit }) {
 
                 <div className={`content-group-body ${isExpanded ? 'open' : ''}`}>
                     <div className='content-description'>
-                        <p>{group.description}</p>
+                        <p>{group.descricao}</p>
                     </div>
 
+                    {/* TODO: TALVEZ MUDAR O CONTENT.ID DAQUI */}
                     <div className='content-list'>
                         {group.contents.map((content, index) => (
                             <div key={content.id} className='content-card'>
@@ -475,13 +493,13 @@ function ContentGroup({ group, onEdit }) {
                         <h3 className='confirmation-title'>Quais arquivos deseja remover?</h3>
                         
                         <div className='file-list-confirmation'>
-                            {group.contents.map((content, index) => (
+                            {group.contents.map((content) => (
                                 <div key={content.id} className='file-item-with-checkbox'>
                                     <input 
                                         type="checkbox"
                                         className='file-checkbox'
-                                        checked={selectedForRemoval.includes(index)}
-                                        onChange={(e) => handleCheckboxChange(index, e.target.checked)}
+                                        checked={selectedForRemoval.includes(content.id)}
+                                        onChange={(e) => handleCheckboxChange(content.id, e.target.checked)}
                                     />
                                     <div className='file-info'>
                                         <span className='file-name'>{content.name}</span>
@@ -545,8 +563,8 @@ function ContentGroup({ group, onEdit }) {
 // Componente Modal para criar/editar grupos
 function GroupModal({ title, initialData = null, onSave, onCancel }) {
     const [formData, setFormData] = useState({
-        title: initialData?.title || '',
-        description: initialData?.description || ''
+        nome: initialData?.nome || '',
+        descricao: initialData?.descricao || ''
     });
     const [errors, setErrors] = useState({});
 
@@ -561,12 +579,12 @@ function GroupModal({ title, initialData = null, onSave, onCancel }) {
     const validateForm = () => {
         const newErrors = {};
         
-        if (!formData.title.trim()) {
-            newErrors.title = 'Nome do grupo é obrigatório';
+        if (!formData.nome.trim()) {
+            newErrors.nome = 'Nome do grupo é obrigatório';
         }
         
-        if (!formData.description.trim()) {
-            newErrors.description = 'Descrição é obrigatória';
+        if (!formData.descricao.trim()) {
+            newErrors.descricao = 'Descrição é obrigatória';
         }
 
         setErrors(newErrors);
@@ -591,8 +609,8 @@ function GroupModal({ title, initialData = null, onSave, onCancel }) {
                         <input
                             type='text'
                             className={`form-input ${errors.title ? 'error' : ''}`}
-                            value={formData.title}
-                            onChange={(e) => handleChange('title', e.target.value)}
+                            value={formData.nome}
+                            onChange={(e) => handleChange('nome', e.target.value)}
                             placeholder='Digite o nome do grupo'
                         />
                         {errors.title && <span className='error-message'>{errors.title}</span>}
@@ -602,8 +620,8 @@ function GroupModal({ title, initialData = null, onSave, onCancel }) {
                         <label className='form-label'>Descrição:</label>
                         <textarea
                             className={`form-textarea ${errors.description ? 'error' : ''}`}
-                            value={formData.description}
-                            onChange={(e) => handleChange('description', e.target.value)}
+                            value={formData.descricao}
+                            onChange={(e) => handleChange('descricao', e.target.value)}
                             placeholder='Digite a descrição do grupo'
                             rows={4}
                         />

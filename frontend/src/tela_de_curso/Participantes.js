@@ -9,9 +9,9 @@ function UsersList() {
     const renderListConfig = ({ user_type }) => {
         if(user_type === 'monitor'){
             return(
-                <div class='users-list-config'>
-                    <button class='add-usr-btn'><AddUserIcon class='add-usr-icon'/></button>
-                    <button class='remove-usr-btn'><RemoveUserIcon class='remove-usr-icon'/></button>
+                <div className='users-list-config'>
+                    <button className='add-usr-btn'><AddUserIcon className='add-usr-icon'/></button>
+                    <button className='remove-usr-btn'><RemoveUserIcon className='remove-usr-icon'/></button>
                 </div>
             );
         };
@@ -33,9 +33,9 @@ function UsersList() {
     ];
 
     return(
-        <div class='page'>
+        <div className='page'>
             {renderListConfig({user_type})}
-            <div class='users-list'>
+            <div className='users-list'>
                 {users.map(u => (<UserCard name={u.nome} email={u.email}/>))}
             </div>
         </div>
@@ -44,7 +44,7 @@ function UsersList() {
 
 function UserCard({ name, email }) {
     return(
-        <div class='user-card'>
+        <div className='user-card'>
             <h1>{name}</h1>
             <span>{email}</span>
         </div>
