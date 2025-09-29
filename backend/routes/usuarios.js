@@ -8,6 +8,59 @@ router.get('/', async (req, res) => {
   res.json(result.rows);
 });
 
+// GET /api/usuarios/verify     =     Verifica se existe um usuário com Nome e Email
+router.get('/verify', async (req, res) => {
+  const { nome, email } = req.query;
+
+  if (!nome || !email) {
+    return res.status(400).json({ error: 'Nome e email são obrigatórios' });
+  }
+
+  try {
+    const result = await pool.query(
+      'SELECT EXISTS(SELECT 1 FROM Usuarios WHERE nome = $1 AND email = $2)',
+      [nome, email]
+    );
+
+    res.json({ exists: result.rows[0].exists });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao verificar usuário', details: error.message });
+  }
+});
+
+// GET /api/usuarios/:identifier     =     Buscar usuário por id ou email
+router.get('/:identifier', async (req, res) => {
+  const { identifier } = req.params;
+  
+  try {
+    // Verifica se o identifier é um número (ID) ou string (email)
+    const isId = !isNaN(identifier);
+    
+    let query;
+    let params;
+
+    if (isId) {
+      // Busca por ID
+      query = 'SELECT * FROM Usuarios WHERE id = $1';
+      params = [identifier];
+    } else {
+      // Busca por email
+      query = 'SELECT * FROM Usuarios WHERE email = $1';
+      params = [identifier];
+    }
+
+    const result = await pool.query(query, params);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Usuário não encontrado' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar usuário', details: error.message });
+  }
+});
+
 // POST /api/usuarios    =     Criar um novo usuário
 router.post('/', async (req, res) => {
   const { nome, email, cargo } = req.body;

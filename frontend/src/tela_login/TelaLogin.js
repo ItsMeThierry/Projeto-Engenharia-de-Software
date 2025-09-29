@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { is_user_real, get_user, create_user } from '../api/requests.js';
+import { usePermissionContext } from '../context/PermissionContext.js';
 import './TelaLogin.css'
 
 const TelaLogin = () => {
@@ -6,13 +9,30 @@ const TelaLogin = () => {
   const [email, setEmail] = useState('');
   const [showCadastro, setShowCadastro] = useState(false);
   const [showConfirmacao, setShowConfirmacao] = useState(false);
-  
-  // Estados para o formulário de cadastro
+  const [cadastroSucesso, setCadastroSucesso] = useState(false);
+  const [mensagemErro, setMensagemErro] = useState('');
   const [nomeCadastro, setNomeCadastro] = useState('');
   const [emailCadastro, setEmailCadastro] = useState('');
+  const [tipoUsuario, setTipoUsuario] = useState('aluno');
 
-  const handleEntrar = () => {
-    console.log('Login:', { nome, email });
+  const navigate = useNavigate();
+  const { setUsername, setUserId, setUserType } = usePermissionContext();
+
+  const handleEntrar = async () => {
+    const result = await is_user_real(nome, email);
+
+    if (result) {
+      const user_data = await get_user(email);
+
+      if (user_data) {
+        setUserId(user_data.id);
+        setUsername(user_data.nome);
+        setUserType(user_data.cargo);
+      }
+
+      navigate('/');
+      return;
+    }
   };
 
   const handleCadastrar = () => {
@@ -21,14 +41,26 @@ const TelaLogin = () => {
 
   const handleCloseCadastro = () => {
     setShowCadastro(false);
-    // Limpar os campos do cadastro quando fechar
     setNomeCadastro('');
     setEmailCadastro('');
+    setTipoUsuario('aluno');
   };
 
-  const handleCadastroSubmit = () => {
-    // Aqui será implementada a lógica com database
-    console.log('Cadastro:', { nomeCadastro, emailCadastro });
+  const handleCadastroSubmit = async () => {
+    console.log('Cadastro:', { nomeCadastro, emailCadastro, tipoUsuario });
+    const result = await create_user(nomeCadastro, emailCadastro, tipoUsuario);
+    console.log(result);
+    
+    // Verificar se o cadastro foi bem-sucedido
+    if (result && result.id) {
+      // Cadastro com sucesso
+      setCadastroSucesso(true);
+      setMensagemErro('');
+    } else {
+      // Cadastro com erro
+      setCadastroSucesso(false);
+      setMensagemErro(result?.message || 'Erro ao cadastrar usuário. Tente novamente.');
+    }
     
     // Fechar tela de cadastro e mostrar confirmação
     setShowCadastro(false);
@@ -37,16 +69,20 @@ const TelaLogin = () => {
     // Limpar campos após cadastro
     setNomeCadastro('');
     setEmailCadastro('');
+    setTipoUsuario('aluno');
   };
 
   const handleCancelarCadastro = () => {
     setShowCadastro(false);
     setNomeCadastro('');
     setEmailCadastro('');
+    setTipoUsuario('aluno');
   };
 
   const handleCloseConfirmacao = () => {
     setShowConfirmacao(false);
+    setCadastroSucesso(false);
+    setMensagemErro('');
   };
 
   return (
@@ -127,6 +163,27 @@ const TelaLogin = () => {
                 />
               </div>
 
+              {/* Switch de Tipo de Usuário */}
+              <div className="user-type-container">
+                <label className="user-type-label">Tipo de Usuário</label>
+                <div className="switch-container">
+                  <button
+                    type="button"
+                    className={`switch-option ${tipoUsuario === 'aluno' ? 'active' : ''}`}
+                    onClick={() => setTipoUsuario('aluno')}
+                  >
+                    Aluno
+                  </button>
+                  <button
+                    type="button"
+                    className={`switch-option ${tipoUsuario === 'monitor' ? 'active' : ''}`}
+                    onClick={() => setTipoUsuario('monitor')}
+                  >
+                    Monitor
+                  </button>
+                </div>
+              </div>
+
               <div className="buttons-container-cadastro">
                 <button 
                   onClick={handleCadastroSubmit}
@@ -158,9 +215,16 @@ const TelaLogin = () => {
               ×
             </button>
             <div className="confirmacao-content">
-              <div className="icon-success">✓</div>
-              <h2>Cadastro Realizado!</h2>
-              <p>Usuário cadastrado com sucesso. Agora você já pode fazer login.</p>
+              <div className={`icon-${cadastroSucesso ? 'success' : 'error'}`}>
+                {cadastroSucesso ? '✓' : '✕'}
+              </div>
+              <h2>{cadastroSucesso ? 'Cadastro Realizado!' : 'Erro no Cadastro'}</h2>
+              <p>
+                {cadastroSucesso 
+                  ? 'Usuário cadastrado com sucesso. Agora você já pode fazer login.'
+                  : mensagemErro
+                }
+              </p>
               <button 
                 onClick={handleCloseConfirmacao}
                 className="btn-ok"
