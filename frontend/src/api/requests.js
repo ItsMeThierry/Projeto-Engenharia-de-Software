@@ -1,7 +1,24 @@
 // Usuários
-const get_user =  async (id_user) => {
+const is_user_real = async (name, email) => {
+  try {
+    const params = new URLSearchParams({
+      nome: name,
+      email: email
+    });
+
+    const response = await fetch(`http://localhost:5000/api/usuarios/verify?${params}`);
+    
+    const data = await response.json();
+    return data.exists;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+}
+
+const get_user =  async (identifier) => {
     try {
-        const response = await fetch(`http://localhost:5000/api/usuarios/${id_user}`);
+        const response = await fetch(`http://localhost:5000/api/usuarios/${identifier}`);
         const data = await response.json();
         return data;
     } catch (e) {
@@ -174,6 +191,7 @@ const delete_content_group = async (id_group) => {
 }
 
 module.exports = {
+    is_user_real,
     get_user,
     create_user,
     get_participants,

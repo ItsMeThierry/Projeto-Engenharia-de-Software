@@ -1,0 +1,419 @@
+:root {
+    --text: #020a13;
+    --background: #fafcff;
+    --primary: #093671;
+    --secondary: #699FE6;
+    --accent: #f07851;
+    
+    /* Variações das cores principais */
+    --primary-light: rgba(9, 54, 113, 0.1);
+    --primary-hover: rgba(9, 54, 113, 0.9);
+    --secondary-light: rgba(105, 159, 230, 0.1);
+    --secondary-hover: rgba(105, 159, 230, 0.9);
+    --accent-light: rgba(240, 120, 81, 0.1);
+    --accent-hover: rgba(240, 120, 81, 0.9);
+    
+    /* Cores neutras baseadas no texto */
+    --text-light: rgba(2, 10, 19, 0.6);
+    --text-lighter: rgba(2, 10, 19, 0.4);
+    --border-color: rgba(2, 10, 19, 0.1);
+    --shadow-color: rgba(2, 10, 19, 0.1);
+
+    /* Cores de estado */
+    --success: #28a745;
+    --success-hover: #218838;
+    --success-light: rgba(40, 167, 69, 0.2);
+    --danger: #dc3545;
+    --danger-hover: #c82333;
+    --danger-light: rgba(220, 53, 69, 0.2);
+    --warning: #ffc107;
+    --warning-hover: #e0a800;
+    --warning-light: rgba(255, 193, 7, 0.2);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text);
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: var(--secondary-light);
+    padding: 20px;
+}
+
+.login-form {
+    background: var(--background);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px var(--shadow-color);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.logo-placeholder {
+    margin-bottom: 30px;
+}
+
+.logo-box {
+    width: 80px;
+    height: 80px;
+    background: var(--primary-light);
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-weight: bold;
+    color: var(--text-lighter);
+    font-size: 14px;
+}
+
+.inputs-container {
+    margin-bottom: 30px;
+}
+
+.input-field {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+    outline: none;
+    background: var(--background);
+    color: var(--text);
+}
+
+.input-field:focus {
+    border-color: var(--secondary);
+    background: var(--secondary-light);
+}
+
+.input-field::placeholder {
+    color: var(--text-lighter);
+}
+
+.buttons-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.btn-entrar {
+    background: var(--primary);
+    color: var(--background);
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-entrar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px var(--primary-light);
+    background: var(--primary-hover);
+}
+
+.btn-cadastrar {
+    background: transparent;
+    color: var(--secondary);
+    border: 2px solid var(--secondary);
+    padding: 13px 30px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-cadastrar:hover {
+    background: var(--secondary);
+    color: var(--background);
+    transform: translateY(-1px);
+}
+
+/* Overlay styles */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(2, 10, 19, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.overlay-content {
+    background: var(--background);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px var(--shadow-color);
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--text-light);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+}
+
+.close-btn:hover {
+    background: var(--accent-light);
+    color: var(--accent);
+}
+
+.cadastro-placeholder h2 {
+    color: var(--text);
+    margin-bottom: 15px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.cadastro-placeholder p {
+    color: var(--text-light);
+    font-size: 16px;
+}
+
+/* Estilos da tela de cadastro */
+.cadastro-form h2 {
+    color: var(--text);
+    margin-bottom: 10px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.cadastro-form p {
+    color: var(--text-light);
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+/* Estilos do Switch de Tipo de Usuário */
+.user-type-container {
+    margin-bottom: 25px;
+    margin-top: 20px;
+}
+
+.user-type-label {
+    display: block;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    text-align: left;
+}
+
+.switch-container {
+    display: flex;
+    background: var(--primary-light);
+    border-radius: 8px;
+    padding: 4px;
+    border: 1px solid var(--border-color);
+}
+
+.switch-option {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    background: transparent;
+    color: var(--text-light);
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.switch-option.active {
+    background: var(--primary);
+    color: var(--background);
+    box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.switch-option:hover:not(.active) {
+    background: var(--secondary-light);
+    color: var(--text);
+}
+
+.buttons-container-cadastro {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.btn-cadastrar-submit {
+    background: var(--success);
+    color: var(--background);
+    border: none;
+    padding: 15px 30px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-cadastrar-submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px var(--primary-light);
+}
+
+.btn-cadastrar-submit:disabled {
+    background: var(--text-lighter);
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-cancelar {
+    background: transparent;
+    color: var(--text-light);
+    border: 2px solid var(--border-color);
+    padding: 13px 30px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-cancelar:hover {
+    background: var(--accent-light);
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* Estilos da tela de confirmação */
+.confirmacao-content {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.icon-success {
+    width: 60px;
+    height: 60px;
+    background: var(--success);
+    color: var(--background);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0 auto 20px auto;
+}
+
+.icon-error {
+    width: 60px;
+    height: 60px;
+    background: var(--danger);
+    color: var(--background);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0 auto 20px auto;
+}
+
+.confirmacao-content h2 {
+    color: var(--text);
+    margin-bottom: 15px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.confirmacao-content p {
+    color: var(--text-light);
+    font-size: 16px;
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.btn-ok {
+    background: var(--primary);
+    color: var(--background);
+    border: none;
+    padding: 12px 40px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-ok:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px var(--primary-light);
+    background: var(--primary-hover);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .login-form {
+    padding: 30px 20px;
+    }
+    
+    .buttons-container {
+    flex-direction: column;
+    }
+
+    .overlay-content {
+    width: 95%;
+    padding: 1.5rem;
+    max-height: 85vh;
+    overflow-y: auto;
+    }
+
+    .buttons-container-cadastro {
+    flex-direction: column;
+    }
+
+    .btn-cadastrar-submit,
+    .btn-cancelar,
+    .btn-ok {
+    width: 100%;
+    }
+
+    .switch-option {
+    padding: 10px 12px;
+    font-size: 14px;
+    }
+}
