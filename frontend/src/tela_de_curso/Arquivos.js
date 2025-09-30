@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { usePermissionContext } from '../context/PermissionContext.js';
+import { X, AlertTriangle } from 'lucide-react';
 import { ReactComponent as AddIcon } from '../icones/adicionar-documento.svg';
 import { ReactComponent as RemoveFileIcon } from '../icones/excluir-documento.svg';
 import { ReactComponent as EditIcon } from '../icones/editar.svg';
@@ -25,26 +26,25 @@ function Archives() {
     const { isUserMonitor } = usePermissionContext();
 
     useEffect(() => {
-    const fetchGroups = async () => {
-        try {
-            const response = await get_content_groups(id);
-            console.log(response);
-            
-            if(response) {
-                setGroups(Array.isArray(response) ? response : []);
-            } else {
+        const fetchGroups = async () => {
+            try {
+                const response = await get_content_groups(id);
+                console.log(response);
+                
+                if(response) {
+                    setGroups(Array.isArray(response) ? response : []);
+                } else {
+                    setGroups([]);
+                }
+            } catch (e) {
+                console.error(e);
                 setGroups([]);
             }
-        } catch (e) {
-            console.error(e);
-            setGroups([]);
-        }
-    };
+        };
 
-    fetchGroups();
-}, [id]);
+        fetchGroups();
+    }, [id]);
 
-    // Funções para criar grupo
     const handleCreateGroup = async (groupData) => {
         try{
             const result = await create_content_group(
@@ -65,13 +65,12 @@ function Archives() {
                 setShowCreateModal(false);
                 return;
             } 
-                alert('Erro ao criar o grupo!');
+            alert('Erro ao criar o grupo!');
         } catch (e) {
             console.error('Erro ao criar grupo: ', e);
         }
     };
 
-    // Funções para editar grupo
     const handleEditGroup = (group) => {
         setEditingGroup(group);
         setShowEditModal(true);
@@ -101,7 +100,6 @@ function Archives() {
         }
     };
 
-    // Funções para remover grupos
     const handleRemoveGroups = () => {
         setShowRemoveModal(true);
         setSelectedForRemoval([]);
@@ -175,7 +173,7 @@ function Archives() {
 
             {groups.length > 0 ? groups.map(group => (
                 <ContentGroup 
-                    key={group.id_modulo || group.id} // Use id_modulo como fallback
+                    key={group.id_modulo || group.id}
                     group={group}
                     onEdit={handleEditGroup}
                 />
@@ -185,7 +183,6 @@ function Archives() {
                 </div>
             )}
 
-            {/* Modal de Criação */}
             {showCreateModal && (
                 <GroupModal
                     title="Criar Novo Grupo"
@@ -194,7 +191,6 @@ function Archives() {
                 />
             )}
 
-            {/* Modal de Edição */}
             {showEditModal && editingGroup && (
                 <GroupModal
                     title="Editar Grupo"
@@ -207,80 +203,27 @@ function Archives() {
                 />
             )}
 
-            {/* Modal de Seleção para Remoção */}
             {showRemoveModal && (
-                <div className='upload-overlay'>
-                    <div className='upload-confirmation'>
-                        <h3 className='confirmation-title'>Quais grupos deseja remover?</h3>
-                        
-                        <div className='file-list-confirmation'>
-                            {groups.length > 0 ? groups.map((group) => (
-                                <div key={group.id_modulo} className='file-item-with-checkbox'>
-                                    <input 
-                                        type="checkbox"
-                                        className='file-checkbox'
-                                        checked={selectedForRemoval.includes(group.id_modulo)}
-                                        onChange={(e) => handleGroupRemovalSelection(group.id_modulo, e.target.checked)}
-                                    />
-                                    <div className='file-info'>
-                                        <span className='file-name'>{group.nome}</span>
-                                        <span className='file-size'>{group.contents.length} arquivo(s)</span>
-                                    </div>
-                                </div>
-                            )) : 
-                            (
-                                <div className="no-groups-message">
-                                    Nenhum grupo disponível para remoção.
-                                </div>
-                            )}
-                        </div>
-
-                        <div className='confirmation-buttons'>
-                            <button className='cancel-btn' onClick={handleCancelRemoveSelection}>
-                                Cancelar
-                            </button>
-                            <button 
-                                className='confirm-btn' 
-                                onClick={handleConfirmRemoveSelection}
-                                disabled={selectedForRemoval.length === 0}
-                            >
-                                Confirmar
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <RemoveGroupsModal
+                    groups={groups}
+                    selectedForRemoval={selectedForRemoval}
+                    onToggleSelection={handleGroupRemovalSelection}
+                    onConfirm={handleConfirmRemoveSelection}
+                    onCancel={handleCancelRemoveSelection}
+                />
             )}
 
-            {/* Modal de Confirmação de Remoção */}
             {showRemoveConfirmation && (
-                <div className='upload-overlay'>
-                    <div className='upload-confirmation'>
-                        <h3 className='confirmation-title'>Os seguintes grupos serão removidos:</h3>
-                        
-                        <div className='file-list-confirmation'>
-                            {groupsToRemove.map((group) => (
-                                <div key={group.id} className='file-item'>
-                                    <div className='file-info'>
-                                        <span className='file-name'>{group.nome}</span>
-                                        <span className='file-size'>{group.contents.length} arquivo(s)</span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-
-                        <div className='remove-confirmation-footer'>
-                            <p className='remove-question'>Deseja removê-los? Esta ação não pode ser desfeita.</p>
-                            <div className='confirmation-buttons'>
-                                <button className='cancel-btn' onClick={handleCancelRemoveConfirmation}>
-                                    Não
-                                </button>
-                                <button className='confirm-btn' onClick={handleConfirmRemove}>
-                                    Sim
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <ConfirmRemovalModal
+                    title="Confirmar Remoção de Grupos"
+                    items={groupsToRemove}
+                    itemType="grupo"
+                    itemsType="grupos"
+                    getItemName={(group) => group.nome}
+                    getItemMeta={(group) => `${group.contents.length} arquivo(s)`}
+                    onConfirm={handleConfirmRemove}
+                    onCancel={handleCancelRemoveConfirmation}
+                />
             )}
         </div>
     );
@@ -290,8 +233,6 @@ function ContentGroup({ group, onEdit }) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [showConfirmation, setShowConfirmation] = useState(false);
-    
-    // Estados para remoção de arquivos
     const [showRemoveSelection, setShowRemoveSelection] = useState(false);
     const [showRemoveConfirmation, setShowRemoveConfirmation] = useState(false);
     const [filesToRemove, setFilesToRemove] = useState([]);
@@ -300,7 +241,6 @@ function ContentGroup({ group, onEdit }) {
     const { isUserMonitor } = usePermissionContext();
     const fileInputRef = useRef(null);
 
-    // Converte um número de bytes em uma string com o formato legivel
     const formatFileSize = (bytes) => {
         if (bytes === 0) return '0 Bytes';
         const k = 1024;
@@ -309,12 +249,10 @@ function ContentGroup({ group, onEdit }) {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     };
 
-    // Abre o seletor de arquivos
     const handleAddFiles = () => {
         fileInputRef.current.click();
     };
 
-    // Gera a lista de arquivos selecionados e depois abre a tela de confirmação de envio
     const handleFileSelect = (event) => {
         const files = Array.from(event.target.files);
         const fileList = files.map(file => ({
@@ -327,26 +265,21 @@ function ContentGroup({ group, onEdit }) {
         setShowConfirmation(true);
     };
 
-    // Remove um arquivo selecionado para envio
     const removeFileFromList = (fileId) => {
         setSelectedFiles(prev => prev.filter(file => file.id !== fileId));
     };
 
-    // Fecha a tela de confirmação
     const handleCancelUpload = () => {
         setShowConfirmation(false);
         setSelectedFiles([]);
         fileInputRef.current.value = '';
     };
 
-    // Realiza o upload do arquivo na database
     const handleConfirmUpload = () => {
-        // Aqui você implementaria a lógica de upload
         console.log('Enviando arquivos para o grupo:', group.id_modulo, selectedFiles);
         handleCancelUpload();
     };
 
-    // Funções para remoção de arquivos
     const handleRemoveFiles = () => {
         setShowRemoveSelection(true);
         setSelectedForRemoval([]);
@@ -359,7 +292,6 @@ function ContentGroup({ group, onEdit }) {
             setSelectedForRemoval(prev => prev.filter(id => id !== contentId));
         }
     };
-
 
     const handleCancelRemoveSelection = () => {
         setShowRemoveSelection(false);
@@ -384,7 +316,6 @@ function ContentGroup({ group, onEdit }) {
     };
 
     const handleConfirmRemove = () => {
-        // Aqui você implementaria a lógica de remoção dos arquivos
         console.log('Removendo arquivos do grupo:', group.id_modulo, filesToRemove);
         handleCancelRemoveConfirmation();
     };
@@ -444,13 +375,10 @@ function ContentGroup({ group, onEdit }) {
                         <p>{group.descricao}</p>
                     </div>
 
-                    {/* TODO: TALVEZ MUDAR O CONTENT.ID DAQUI */}
                     <div className='content-list'>
-                        {group.contents && group.contents.length > 0 ? group.contents.map((content, index) => (
+                        {group.contents && group.contents.length > 0 ? group.contents.map((content) => (
                             <div key={content.id} className='content-card'>
-                                <div className='content-icon'>
-                                    📄
-                                </div>
+                                <div className='content-icon'>📄</div>
                                 <div className='content-info'>
                                     <h4>{content.name}</h4>
                                     <span className='content-meta'>{content.size}</span>
@@ -467,125 +395,42 @@ function ContentGroup({ group, onEdit }) {
                 </div>
             </div>
 
-            {/* Overlay de Confirmação de Upload */}
             {showConfirmation && (
-                <div className='upload-overlay'>
-                    <div className='upload-confirmation'>
-                        <h3 className='confirmation-title'>Deseja enviar os seguintes arquivos?</h3>
-                        
-                        <div className='file-list-confirmation'>
-                            {selectedFiles.map((file) => (
-                                <div key={file.id} className='file-item'>
-                                    <div className='file-info'>
-                                        <span className='file-name'>{file.name}</span>
-                                        <span className='file-size'>{file.size}</span>
-                                    </div>
-                                    <button 
-                                        className='remove-file-btn'
-                                        onClick={() => removeFileFromList(file.id)}
-                                    >
-                                        ✕
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-
-                        <div className='confirmation-buttons'>
-                            <button className='cancel-btn' onClick={handleCancelUpload}>
-                                Não
-                            </button>
-                            <button 
-                                className='confirm-btn' 
-                                onClick={handleConfirmUpload}
-                                disabled={selectedFiles.length === 0}
-                            >
-                                Sim
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <UploadConfirmationModal
+                    files={selectedFiles}
+                    onRemoveFile={removeFileFromList}
+                    onConfirm={handleConfirmUpload}
+                    onCancel={handleCancelUpload}
+                />
             )}
 
-            {/* Overlay de Seleção para Remoção */}
             {showRemoveSelection && (
-                <div className='upload-overlay'>
-                    <div className='upload-confirmation'>
-                        <h3 className='confirmation-title'>Quais arquivos deseja remover?</h3>
-                        
-                        <div className='file-list-confirmation'>
-                            {group.contents && group.contents.length > 0 ? group.contents.map((content) => (
-                                <div key={content.id} className='file-item-with-checkbox'>
-                                    <input 
-                                        type="checkbox"
-                                        className='file-checkbox'
-                                        checked={selectedForRemoval.includes(content.id)}
-                                        onChange={(e) => handleCheckboxChange(content.id, e.target.checked)}
-                                    />
-                                    <div className='file-info'>
-                                        <span className='file-name'>{content.name}</span>
-                                        <span className='file-size'>{content.size}</span>
-                                    </div>
-                                </div>
-                            )) : 
-                            (
-                                <div className="no-contents-message">
-                                    Nenhum arquivo para remover.
-                                </div>
-                            )}
-                        </div>
-
-                        <div className='confirmation-buttons'>
-                            <button className='cancel-btn' onClick={handleCancelRemoveSelection}>
-                                Sair
-                            </button>
-                            <button 
-                                className='confirm-btn' 
-                                onClick={handleConfirmRemoveSelection}
-                                disabled={selectedForRemoval.length === 0}
-                            >
-                                Confirmar
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <RemoveFilesModal
+                    contents={group.contents}
+                    selectedForRemoval={selectedForRemoval}
+                    onToggleSelection={handleCheckboxChange}
+                    onConfirm={handleConfirmRemoveSelection}
+                    onCancel={handleCancelRemoveSelection}
+                />
             )}
 
-            {/* Overlay de Confirmação de Remoção */}
             {showRemoveConfirmation && (
-                <div className='upload-overlay'>
-                    <div className='upload-confirmation'>
-                        <h3 className='confirmation-title'>Os seguintes arquivos serão removidos:</h3>
-                        
-                        <div className='file-list-confirmation'>
-                            {filesToRemove.map((file, index) => (
-                                <div key={index} className='file-item'>
-                                    <div className='file-info'>
-                                        <span className='file-name'>{file.name}</span>
-                                        <span className='file-size'>{file.size}</span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-
-                        <div className='remove-confirmation-footer'>
-                            <p className='remove-question'>Deseja removê-los?</p>
-                            <div className='confirmation-buttons'>
-                                <button className='cancel-btn' onClick={handleCancelRemoveConfirmation}>
-                                    Não
-                                </button>
-                                <button className='confirm-btn' onClick={handleConfirmRemove}>
-                                    Sim
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <ConfirmRemovalModal
+                    title="Confirmar Remoção de Arquivos"
+                    items={filesToRemove}
+                    itemType="arquivo"
+                    itemsType="arquivos"
+                    getItemName={(file) => file.name}
+                    getItemMeta={(file) => file.size}
+                    onConfirm={handleConfirmRemove}
+                    onCancel={handleCancelRemoveConfirmation}
+                />
             )}
         </>
     );
 }
 
-// Componente Modal para criar/editar grupos
+// Modal para criar/editar grupos
 function GroupModal({ title, initialData = null, onSave, onCancel }) {
     const [formData, setFormData] = useState({
         nome: initialData?.nome || '',
@@ -595,7 +440,6 @@ function GroupModal({ title, initialData = null, onSave, onCancel }) {
 
     const handleChange = (field, value) => {
         setFormData(prev => ({ ...prev, [field]: value }));
-        // Limpa o erro do campo quando o usuário começa a digitar
         if (errors[field]) {
             setErrors(prev => ({ ...prev, [field]: '' }));
         }
@@ -624,11 +468,16 @@ function GroupModal({ title, initialData = null, onSave, onCancel }) {
     };
 
     return (
-        <div className='upload-overlay'>
-            <div className='upload-confirmation group-modal'>
-                <h3 className='confirmation-title'>{title}</h3>
-                
-                <form onSubmit={handleSubmit} className='group-form'>
+        <div className='modal-overlay' onClick={onCancel}>
+            <div className='modal-container' onClick={(e) => e.stopPropagation()}>
+                <div className='modal-header'>
+                    <h3>{title}</h3>
+                    <button className='close-button' onClick={onCancel}>
+                        <X size={20} />
+                    </button>
+                </div>
+
+                <form onSubmit={handleSubmit} className='modal-content'>
                     <div className='form-field'>
                         <label className='form-label'>Nome do Grupo:</label>
                         <input
@@ -653,15 +502,221 @@ function GroupModal({ title, initialData = null, onSave, onCancel }) {
                         {errors.descricao && <span className='error-message'>{errors.descricao}</span>}
                     </div>
 
-                    <div className='confirmation-buttons'>
-                        <button type='button' className='cancel-btn' onClick={onCancel}>
+                    <div className='modal-footer'>
+                        <button type='button' className='cancel-button' onClick={onCancel}>
                             Cancelar
                         </button>
-                        <button type='submit' className='confirm-btn'>
+                        <button type='submit' className='confirm-button'>
                             Salvar
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    );
+}
+
+// Modal para selecionar grupos para remover
+function RemoveGroupsModal({ groups, selectedForRemoval, onToggleSelection, onConfirm, onCancel }) {
+    return (
+        <div className='modal-overlay' onClick={onCancel}>
+            <div className='modal-container' onClick={(e) => e.stopPropagation()}>
+                <div className='modal-header'>
+                    <h3>Remover Grupos</h3>
+                    <button className='close-button' onClick={onCancel}>
+                        <X size={20} />
+                    </button>
+                </div>
+
+                <div className='modal-content'>
+                    <p className='modal-question'>Quais grupos deseja remover?</p>
+                    
+                    <div className='items-list'>
+                        {groups.length === 0 ? (
+                            <div className='no-items'>
+                                <p>Nenhum grupo disponível para remoção.</p>
+                            </div>
+                        ) : (
+                            groups.map((group) => (
+                                <label key={group.id_modulo} className='checkbox-item'>
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedForRemoval.includes(group.id_modulo)}
+                                        onChange={(e) => onToggleSelection(group.id_modulo, e.target.checked)}
+                                    />
+                                    <div className='item-info'>
+                                        <span className='item-name'>{group.nome}</span>
+                                        <span className='item-meta'>{group.contents.length} arquivo(s)</span>
+                                    </div>
+                                </label>
+                            ))
+                        )}
+                    </div>
+                </div>
+
+                <div className='modal-footer'>
+                    <button className='cancel-button' onClick={onCancel}>
+                        Sair
+                    </button>
+                    <button 
+                        className='confirm-button' 
+                        onClick={onConfirm}
+                        disabled={selectedForRemoval.length === 0}
+                    >
+                        Confirmar
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// Modal para selecionar arquivos para remover
+function RemoveFilesModal({ contents, selectedForRemoval, onToggleSelection, onConfirm, onCancel }) {
+    return (
+        <div className='modal-overlay' onClick={onCancel}>
+            <div className='modal-container' onClick={(e) => e.stopPropagation()}>
+                <div className='modal-header'>
+                    <h3>Remover Arquivos</h3>
+                    <button className='close-button' onClick={onCancel}>
+                        <X size={20} />
+                    </button>
+                </div>
+
+                <div className='modal-content'>
+                    <p className='modal-question'>Quais arquivos deseja remover?</p>
+                    
+                    <div className='items-list'>
+                        {!contents || contents.length === 0 ? (
+                            <div className='no-items'>
+                                <p>Nenhum arquivo para remover.</p>
+                            </div>
+                        ) : (
+                            contents.map((content) => (
+                                <label key={content.id} className='checkbox-item'>
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedForRemoval.includes(content.id)}
+                                        onChange={(e) => onToggleSelection(content.id, e.target.checked)}
+                                    />
+                                    <div className='item-info'>
+                                        <span className='item-name'>{content.name}</span>
+                                        <span className='item-meta'>{content.size}</span>
+                                    </div>
+                                </label>
+                            ))
+                        )}
+                    </div>
+                </div>
+
+                <div className='modal-footer'>
+                    <button className='cancel-button' onClick={onCancel}>
+                        Sair
+                    </button>
+                    <button 
+                        className='confirm-button' 
+                        onClick={onConfirm}
+                        disabled={selectedForRemoval.length === 0}
+                    >
+                        Confirmar
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// Modal de confirmação de upload
+function UploadConfirmationModal({ files, onRemoveFile, onConfirm, onCancel }) {
+    return (
+        <div className='modal-overlay' onClick={onCancel}>
+            <div className='modal-container' onClick={(e) => e.stopPropagation()}>
+                <div className='modal-header'>
+                    <h3>Confirmar Upload</h3>
+                    <button className='close-button' onClick={onCancel}>
+                        <X size={20} />
+                    </button>
+                </div>
+
+                <div className='modal-content'>
+                    <p className='modal-question'>Deseja enviar os seguintes arquivos?</p>
+                    
+                    <div className='items-list'>
+                        {files.map((file) => (
+                            <div key={file.id} className='file-item-removable'>
+                                <div className='item-info'>
+                                    <span className='item-name'>{file.name}</span>
+                                    <span className='item-meta'>{file.size}</span>
+                                </div>
+                                <button 
+                                    className='remove-item-button'
+                                    onClick={() => onRemoveFile(file.id)}
+                                >
+                                    <X size={16} />
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className='modal-footer'>
+                    <button className='cancel-button' onClick={onCancel}>
+                        Não
+                    </button>
+                    <button 
+                        className='confirm-button' 
+                        onClick={onConfirm}
+                        disabled={files.length === 0}
+                    >
+                        Sim
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// Modal genérico de confirmação de remoção
+function ConfirmRemovalModal({ title, items, itemType, itemsType, getItemName, getItemMeta, onConfirm, onCancel }) {
+    return (
+        <div className='modal-overlay' onClick={onCancel}>
+            <div className='modal-container' onClick={(e) => e.stopPropagation()}>
+                <div className='modal-header'>
+                    <h3>{title}</h3>
+                    <button className='close-button' onClick={onCancel}>
+                        <X size={20} />
+                    </button>
+                </div>
+
+                <div className='modal-content confirmation-content'>
+                    <div className='warning-icon'>
+                        <AlertTriangle size={48} />
+                    </div>
+                    <p className='confirmation-text'>
+                        Tem certeza que deseja remover {items.length} {items.length === 1 ? itemType : itemsType}?
+                    </p>
+                    <p className='confirmation-subtext'>
+                        Esta ação não pode ser desfeita.
+                    </p>
+                    
+                    <div className='selected-items-preview'>
+                        {items.map((item, index) => (
+                            <div key={index} className='item-preview'>
+                                <span className='item-preview-name'>• {getItemName(item)}</span>
+                                {getItemMeta && <span className='item-preview-meta'>({getItemMeta(item)})</span>}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className='modal-footer'>
+                    <button className='cancel-button' onClick={onCancel}>
+                        Cancelar
+                    </button>
+                    <button className='confirm-delete-button' onClick={onConfirm}>
+                        Remover {itemsType}
+                    </button>
+                </div>
             </div>
         </div>
     );

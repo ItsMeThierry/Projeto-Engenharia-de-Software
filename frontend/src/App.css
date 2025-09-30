@@ -1,87 +1,49 @@
-/* Variáveis de cores */
-:root {
-  --text: #020a13;
-  --background: #fafcff;
-  --primary: #093671;
-  --secondary: #699FE6;
-  --accent: #f07851;
-  
-  /* Variações das cores principais */
-  --primary-light: rgba(9, 54, 113, 0.1);
-  --primary-hover: rgba(9, 54, 113, 0.9);
-  --secondary-light: rgba(105, 159, 230, 0.1);
-  --secondary-hover: rgba(105, 159, 230, 0.9);
-  --accent-light: rgba(240, 120, 81, 0.1);
-  --accent-hover: rgba(240, 120, 81, 0.9);
-  
-  /* Cores neutras baseadas no texto */
-  --text-light: rgba(2, 10, 19, 0.6);
-  --text-lighter: rgba(2, 10, 19, 0.4);
-  --border-color: rgba(2, 10, 19, 0.1);
-  --shadow-color: rgba(2, 10, 19, 0.1);
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
-  background: var(--primary);
-  color: var(--background);
-  box-shadow: 0 2px 10px var(--shadow-color);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.header-left .home-btn {
-  background: rgba(255, 255, 255, 0.2);
-  color: var(--background);
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.header-left .home-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-1px);
-}
-
-.header-right .perfil {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.avatar {
-  width: 40px;
-  height: 40px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-}
-
-.main-layout {
-  display: flex;
-  min-height: calc(100vh - 80px);
-  width: 100%;
-  background: var(--background);
-}
-
 @media (max-width: 768px) {
   .main-layout {
     flex-direction: column;
   }
+}
+
+/* Popout de Gerenciar Disciplinas */
+.manage-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+}
+
+.manage-menu-popout {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: var(--background);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px var(--shadow-color);
+  min-width: 180px;
+  padding: 0.5rem;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.manage-menu-option {
+  background: transparent;
+  border: none;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.manage-menu-option:hover {
+  background: var(--primary-light);
+  color: var(--primary);
 }

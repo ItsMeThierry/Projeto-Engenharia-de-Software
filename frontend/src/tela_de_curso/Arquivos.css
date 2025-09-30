@@ -6,7 +6,6 @@
   --secondary: #699FE6;
   --accent: #f07851;
   
-  /* Variações das cores principais */
   --primary-light: rgba(9, 54, 113, 0.1);
   --primary-hover: rgba(9, 54, 113, 0.9);
   --secondary-light: rgba(105, 159, 230, 0.1);
@@ -14,14 +13,12 @@
   --accent-light: rgba(240, 120, 81, 0.1);
   --accent-hover: rgba(240, 120, 81, 0.9);
   
-  /* Cores neutras baseadas no texto */
   --text-light: rgba(2, 10, 19, 0.6);
   --text-lighter: rgba(2, 10, 19, 0.4);
   --border-color: rgba(2, 10, 19, 0.1);
   --shadow-color: rgba(2, 10, 19, 0.1);
   --shadow-hover: rgba(2, 10, 19, 0.15);
   
-  /* Cores de estado */
   --success: #28a745;
   --success-hover: #218838;
   --success-light: rgba(40, 167, 69, 0.2);
@@ -32,12 +29,11 @@
   --warning-hover: #e0a800;
   --warning-light: rgba(255, 193, 7, 0.2);
   
-  /* Cores de fundo */
   --bg-light: rgba(250, 252, 255, 0.8);
   --bg-card: rgba(255, 255, 255, 0.95);
 }
 
-/* Controles de gerenciamento de grupos */
+/* ===== CONTROLES DE GERENCIAMENTO ===== */
 .group-management-controls {
   display: flex;
   gap: 1rem;
@@ -93,7 +89,7 @@
   fill: currentColor;
 }
 
-/* Header do grupo atualizado */
+/* ===== GRUPOS DE CONTEÚDO ===== */
 .content-header {
   display: flex;
   align-items: center;
@@ -310,52 +306,97 @@
   margin-bottom: 1rem;
 }
 
-/* Estilos para o overlay de confirmação e modais */
-.upload-overlay {
+/* ===== SISTEMA DE MODAIS ATUALIZADO ===== */
+.modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(2, 10, 19, 0.6);
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 2000;
+  padding: 20px;
   backdrop-filter: blur(4px);
 }
 
-.upload-confirmation {
+.modal-container {
   background: var(--background);
-  border-radius: 12px;
-  padding: 2rem;
-  max-width: 500px;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px var(--shadow-hover);
   width: 90%;
-  max-height: 80vh;
+  max-width: 500px;
+  max-height: 85vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 10px 40px var(--shadow-hover);
+  animation: slideDown 0.3s ease-out;
 }
 
-.group-modal {
-  max-width: 600px;
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-.confirmation-title {
-  color: var(--text);
-  font-size: 1.3rem;
+/* Cabeçalho da Modal */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
   font-weight: 600;
-  margin-bottom: 1.5rem;
-  text-align: center;
+  color: var(--text);
 }
 
-/* Estilos para o formulário do modal de grupo */
-.group-form {
+.close-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  color: var(--text-light);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-button:hover {
+  background: var(--primary-light);
+  color: var(--text);
+}
+
+/* Conteúdo da Modal */
+.modal-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
+.modal-question {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text);
+  margin: 0 0 20px 0;
+}
+
+/* Formulários */
 .form-field {
   display: flex;
   flex-direction: column;
@@ -405,77 +446,91 @@
   font-weight: 500;
 }
 
-.file-list-confirmation {
+/* Lista de Itens */
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   max-height: 300px;
   overflow-y: auto;
-  margin-bottom: 2rem;
+  padding-right: 8px;
+}
+
+.items-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.items-list::-webkit-scrollbar-track {
+  background: var(--primary-light);
+  border-radius: 3px;
+}
+
+.items-list::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 3px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--primary-light);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  background: var(--bg-light);
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.file-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid var(--border-color);
-  transition: background 0.2s ease;
+.checkbox-item:hover {
+  background: var(--background);
+  border-color: var(--primary);
 }
 
-.file-item:last-child {
-  border-bottom: none;
-}
-
-.file-item:hover {
-  background: var(--primary-light);
-}
-
-/* Estilos para os itens com checkbox */
-.file-item-with-checkbox {
-  display: flex;
-  align-items: center;
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid var(--border-color);
-  transition: background 0.2s ease;
-  gap: 1rem;
-}
-
-.file-item-with-checkbox:last-child {
-  border-bottom: none;
-}
-
-.file-item-with-checkbox:hover {
-  background: var(--primary-light);
-}
-
-.file-checkbox {
+.checkbox-item input[type="checkbox"] {
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: var(--secondary);
-  flex-shrink: 0;
+  accent-color: var(--primary);
 }
 
-.file-info {
+.item-info {
   display: flex;
   flex-direction: column;
   flex: 1;
 }
 
-.file-name {
+.item-name {
+  font-size: 0.95rem;
   color: var(--text);
   font-weight: 500;
   margin-bottom: 0.25rem;
   word-break: break-word;
 }
 
-.file-size {
+.item-meta {
   color: var(--text-light);
   font-size: 0.85rem;
 }
 
-.remove-file-btn {
+/* Item de arquivo removível */
+.file-item-removable {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--primary-light);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.file-item-removable:hover {
+  background: var(--background);
+  border-color: var(--primary);
+}
+
+.remove-item-button {
   background: var(--danger);
   color: var(--background);
   border: none;
@@ -486,97 +541,153 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 0.9rem;
   transition: all 0.2s ease;
   flex-shrink: 0;
-  margin-left: 1rem;
 }
 
-.remove-file-btn:hover {
+.remove-item-button:hover {
   background: var(--danger-hover);
   transform: scale(1.1);
 }
 
-.confirmation-buttons {
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
+.no-items {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-light);
 }
 
-/* Estilos específicos para o footer da confirmação de remoção */
-.remove-confirmation-footer {
+/* Rodapé da Modal */
+.modal-footer {
+  display: flex;
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-color);
+  background: var(--primary-light);
+  border-radius: 0 0 16px 16px;
+}
+
+.cancel-button,
+.confirm-button,
+.confirm-delete-button {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-button {
+  background: var(--background);
+  color: var(--text);
+  border: 1px solid var(--border-color);
+}
+
+.cancel-button:hover {
+  background: var(--primary-light);
+}
+
+.confirm-button {
+  background: var(--primary);
+  color: var(--background);
+}
+
+.confirm-button:hover {
+  background: var(--primary-hover);
+}
+
+.confirm-button:disabled {
+  background: var(--text-lighter);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.confirm-delete-button {
+  background: #dc2626;
+  color: white;
+}
+
+.confirm-delete-button:hover {
+  background: #b91c1c;
+}
+
+/* Tela de Confirmação */
+.confirmation-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
-}
-
-.remove-question {
-  color: var(--text);
-  font-size: 1.1rem;
-  font-weight: 500;
-  margin: 0;
   text-align: center;
+  padding: 32px 24px;
 }
 
-.cancel-btn,
-.confirm-btn {
-  padding: 0.75rem 2rem;
-  border: none;
+.warning-icon {
+  color: #f59e0b;
+  margin-bottom: 20px;
+  animation: warningPulse 2s infinite;
+}
+
+@keyframes warningPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.confirmation-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 8px 0;
+}
+
+.confirmation-subtext {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin: 0 0 24px 0;
+}
+
+.selected-items-preview {
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background: var(--primary-light);
   border-radius: 8px;
-  cursor: pointer;
+  padding: 16px;
+  text-align: left;
+}
+
+.item-preview {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  padding: 4px 0;
+  line-height: 1.5;
+}
+
+.item-preview-name {
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.item-preview-meta {
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
+/* Mensagens de estado vazio */
+.no-groups-message,
+.no-contents-message {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-light);
   font-size: 1rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  min-width: 80px;
 }
 
-.cancel-btn {
-  background: var(--text-light);
-  color: var(--background);
-}
-
-.cancel-btn:hover {
-  background: var(--text);
-  transform: translateY(-1px);
-}
-
-.confirm-btn {
-  background: var(--success);
-  color: var(--background);
-}
-
-.confirm-btn:hover:not(:disabled) {
-  background: var(--success-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px var(--success-light);
-}
-
-.confirm-btn:disabled {
-  background: var(--text-lighter);
-  cursor: not-allowed;
-}
-
-/* Scrollbar personalizada para a lista de arquivos */
-.file-list-confirmation::-webkit-scrollbar {
-  width: 8px;
-}
-
-.file-list-confirmation::-webkit-scrollbar-track {
-  background: var(--bg-light);
-  border-radius: 4px;
-}
-
-.file-list-confirmation::-webkit-scrollbar-thumb {
-  background: var(--text-lighter);
-  border-radius: 4px;
-}
-
-.file-list-confirmation::-webkit-scrollbar-thumb:hover {
-  background: var(--text-light);
-}
-
-/* Responsividade */
+/* ===== RESPONSIVIDADE ===== */
 @media (max-width: 768px) {
   .group-management-controls {
     flex-direction: column;
@@ -590,41 +701,48 @@
     width: 100%;
   }
 
-  .upload-confirmation {
+  .modal-container {
     width: 95%;
-    padding: 1.5rem;
-    max-height: 85vh;
+    max-height: 90vh;
   }
-  
-  .group-modal {
-    max-width: 95%;
+
+  .modal-header {
+    padding: 16px 20px;
   }
-  
-  .confirmation-title {
+
+  .modal-header h3 {
     font-size: 1.1rem;
   }
-  
-  .confirmation-buttons {
-    flex-direction: column;
+
+  .modal-content {
+    padding: 20px;
   }
-  
-  .cancel-btn,
-  .confirm-btn {
+
+  .modal-footer {
+    flex-direction: column;
+    padding: 16px 20px;
+  }
+
+  .cancel-button,
+  .confirm-button,
+  .confirm-delete-button {
     width: 100%;
   }
-  
-  .file-item,
-  .file-item-with-checkbox {
-    padding: 0.75rem 1rem;
+
+  .modal-question {
+    font-size: 0.95rem;
   }
-  
-  .file-checkbox {
-    width: 16px;
-    height: 16px;
+
+  .item-name {
+    font-size: 0.9rem;
   }
-  
-  .remove-question {
+
+  .confirmation-text {
     font-size: 1rem;
+  }
+
+  .confirmation-subtext {
+    font-size: 0.85rem;
   }
 
   .content-list {
@@ -648,5 +766,16 @@
   .edit-icon {
     width: 1rem;
     height: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .checkbox-item {
+    padding: 10px 12px;
+  }
+
+  .checkbox-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
   }
 }

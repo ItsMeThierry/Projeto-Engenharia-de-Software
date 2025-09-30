@@ -129,7 +129,7 @@ const TelaPerfil = () => {
                         <User size={18} />
                         <span>Informações Pessoais</span>
                     </a>
-                    <a
+                    {/* <a
                         href="#"
                         className={activeTab === 'account' ? 'active' : ''}
                         onClick={() => setActiveTab('account')}
@@ -144,7 +144,7 @@ const TelaPerfil = () => {
                     >
                         <Bell size={18} />
                         <span>Notificações</span>
-                    </a>
+                    </a> */}
                 </nav>
             </aside>
             <main className="profile-content">{renderContent()}</main>
