@@ -1,34 +1,34 @@
 import React, { useState } from "react";
+import { usePermissionContext } from "../context/PermissionContext";
+import { add_course, add_user_course } from "../api/requests.js";
 import { ArrowLeft, Plus } from "lucide-react";
 import "./DisciplineManager.css"; // aproveita estilo
 
 const DisciplineCreate = ({ setDisciplines, setCurrentView }) => {
     const [name, setName] = useState("");
-    const [professor, setProfessor] = useState("");
+    const { getUserData } = usePermissionContext();
 
-    const handleCreate = () => {
-        if (!name.trim() || !professor.trim()) {
+    const userData = getUserData();
+
+    const handleCreate = async () => {
+        if (!name.trim()) {
             alert("Por favor, preencha todos os campos!");
             return;
         }
 
-        setDisciplines((prev) => [
-            ...prev,
-            {
-                id: Date.now(),
-                name: name.trim(),
-                professor: professor.trim(),
-                students: 0,
-                monitors: 1, // O monitor que criou já é um monitor
-            },
-        ]);
+        const response = await add_course(name, null, userData.id);
+        console.log(response);
 
-        // Limpa os campos
-        setName("");
-        setProfessor("");
+        if(response.id_curso){ 
+            // Limpa os campos
+            setName("");
 
-        // Volta para a lista
-        setCurrentView("list");
+            // Volta para a lista
+            setCurrentView("list");
+            return;
+        }
+
+        alert("Deu algum problema ao cadastrar o curso.");
     };
 
     return (
@@ -78,35 +78,6 @@ const DisciplineCreate = ({ setDisciplines, setCurrentView }) => {
                         placeholder="Ex: Algoritmos e Estruturas de Dados"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        style={{
-                            padding: "12px 16px",
-                            width: "100%",
-                            border: "2px solid #e0e6ed",
-                            borderRadius: "8px",
-                            fontSize: "1rem",
-                            transition: "border-color 0.3s ease",
-                            outline: "none"
-                        }}
-                        onFocus={(e) => e.target.style.borderColor = "#699fe6"}
-                        onBlur={(e) => e.target.style.borderColor = "#e0e6ed"}
-                    />
-                </div>
-
-                <div>
-                    <label style={{
-                        display: 'block',
-                        marginBottom: '8px',
-                        fontWeight: '600',
-                        color: '#2c3e50',
-                        fontSize: '0.95rem'
-                    }}>
-                        Professor(a) Responsável
-                    </label>
-                    <input
-                        type="text"
-                        placeholder="Ex: Dr. Silva"
-                        value={professor}
-                        onChange={(e) => setProfessor(e.target.value)}
                         style={{
                             padding: "12px 16px",
                             width: "100%",

@@ -64,22 +64,10 @@ body {
 
 .logo-placeholder {
     margin-bottom: 30px;
-}
-
-.logo-box {
     width: 80px;
     height: 80px;
-    background: var(--primary-light);
-    border: 2px dashed var(--border-color);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    font-weight: bold;
-    color: var(--text-lighter);
-    font-size: 14px;
 }
+
 
 .inputs-container {
     margin-bottom: 30px;

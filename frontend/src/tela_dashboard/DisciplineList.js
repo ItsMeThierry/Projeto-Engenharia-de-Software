@@ -1,25 +1,28 @@
 import React from "react";
+import { useNavigate } from 'react-router-dom';
+import { usePermissionContext } from "../context/PermissionContext.js";
 import DisciplineCard from "./DisciplineCard.js";
 import "./DisciplineList.css";
 
-const DisciplineList = ({ disciplines, onEnter, isMonitor, setCurrentView }) => {
+const DisciplineList = ({ disciplines, setCurrentView }) => {
+    const { isUserMonitor } = usePermissionContext();
+    const navigate = useNavigate();
+
     return (
         <div className="discipline-list-container">
             <h2>Minhas Disciplinas</h2>
             <div className="discipline-list">
-                {disciplines.map((discipline) => (
+                {disciplines && disciplines.map((discipline) => (
                     <DisciplineCard
                         key={discipline.id}
                         disciplineName={discipline.name}
-                        professor={discipline.professor}
-                        studentCount={discipline.students}
-                        monitorCount={discipline.monitors}
-                        onEnter={() => onEnter(discipline.id)}
+                        professor={discipline.name_owner}
+                        onEnter={() => navigate(`curso/${discipline.id}`)}
                     />
                 ))}
 
                 {/* Card de criar disciplina */}
-                {isMonitor && (
+                {isUserMonitor() && (
                     <div
                         className="discipline-card"
                         style={{

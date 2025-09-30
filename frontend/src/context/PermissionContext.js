@@ -13,65 +13,90 @@ export const usePermissionContext = () => {
 };
 
 export const PermissionProvider = ({ children }) => {
-    // Inicializa os estados com os valores do localStorage, se existirem
-    const [username, setUsernameState] = useState(() => {
-        const saved = localStorage.getItem('username');
-        return saved || null;
-    });
-    
-    const [user_id, setUserIdState] = useState(() => {
-        const saved = localStorage.getItem('user_id');
-        return saved || null;
-    });
-    
-    const [user_type, setUserTypeState] = useState(() => {
-        const saved = localStorage.getItem('user_type');
-        return saved || null;
+    // Inicializa o estado com os valores do localStorage, se existirem
+    const [userData, setUserDataState] = useState(() => {
+        const savedUserData = localStorage.getItem('userData');
+        return savedUserData ? JSON.parse(savedUserData) : {
+            user_id: null,
+            username: null,
+            user_type: null,
+            user_email: null
+        };
     });
 
-    // Funções wrapper que atualizam tanto o estado quanto o localStorage
-    const setUsername = (value) => {
-        setUsernameState(value);
-        if (value === null) {
-            localStorage.removeItem('username');
+    // Função wrapper que atualiza tanto o estado quanto o localStorage
+    const setUserData = (data) => {
+        setUserDataState(data);
+        if (data === null) {
+            localStorage.removeItem('userData');
         } else {
-            localStorage.setItem('username', value);
+            localStorage.setItem('userData', JSON.stringify(data));
         }
+    };
+
+    // Funções específicas para atualizar campos individuais
+    const setUsername = (value) => {
+        setUserData(prev => ({
+            ...prev,
+            username: value
+        }));
     };
 
     const setUserId = (value) => {
-        setUserIdState(value);
-        if (value === null) {
-            localStorage.removeItem('user_id');
-        } else {
-            localStorage.setItem('user_id', value);
-        }
+        setUserData(prev => ({
+            ...prev,
+            user_id: value
+        }));
     };
 
     const setUserType = (value) => {
-        setUserTypeState(value);
-        if (value === null) {
-            localStorage.removeItem('user_type');
-        } else {
-            localStorage.setItem('user_type', value);
-        }
+        setUserData(prev => ({
+            ...prev,
+            user_type: value
+        }));
+    };
+
+    const setUserEmail = (value) => {
+        setUserData(prev => ({
+            ...prev,
+            user_email: value
+        }));
     };
 
     // Função auxiliar para limpar todos os dados do usuário
     const clearUserData = () => {
-        setUsername(null);
-        setUserId(null);
-        setUserType(null);
+        setUserData({
+            user_id: null,
+            username: null,
+            user_type: null,
+            user_email: null
+        });
     };
 
+    // Função para obter os dados do usuário em formato de objeto
+    const getUserData = () => {
+        return {
+            id: userData.user_id,
+            nome: userData.username,
+            email: userData.user_email || "placeholder",
+            cargo: userData.user_type
+        };
+    };
+
+    // Função para verificar se o usuário é um monitor
+    const isUserMonitor = () => {
+        return userData.user_type === 'monitor';
+    }
+
     const value = {
-        username,
+        setUserData,
         setUsername,
-        user_id,
         setUserId,
-        user_type,
         setUserType,
-        clearUserData
+        setUserEmail,
+        clearUserData,
+        getUserData,
+        isUserMonitor
     };
 
     return (

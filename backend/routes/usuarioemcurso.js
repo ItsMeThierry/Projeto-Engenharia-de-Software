@@ -19,32 +19,28 @@ router.get('/', async (req, res) => {
      }
 });
 
-// GET /api/usuarios-em-curso/:curso_id/participantes     =     Listar participantes de um curso, pelo ID do curso
-router.get('/:curso_id/participantes', async (req, res) => {
-  const { curso_id } = req.params;
+// GET /api/usuarios-em-curso/:usuario_id     =     Listar todos os cursos de um usuário específico
+router.get('/:usuario_id', async (req, res) => {
+     const { usuario_id } = req.params;
 
-  try {
-    const result = await pool.query(
-      `
-      SELECT u.nome, u.email, u.cargo
-      FROM UsuariosEmCurso uc
-      INNER JOIN Usuarios u ON uc.usuario_id = u.ID
-      WHERE uc.curso_id = $1
-      ORDER BY u.nome ASC
-      `,
-      [curso_id]
-    );
-
-    if (result.rowCount === 0) {
-      return res.status(404).json({ error: 'Nenhum participante encontrado para este curso' });
-    }
-
-    res.json(result.rows);
-  } catch (error) {
-    res.status(500).json({ error: 'Erro ao buscar participantes', details: error.message });
-  }
+     try {
+          const result = await pool.query(`
+               SELECT 
+                    c.ID_curso as id, 
+                    c.nome as name, 
+                    u.nome as name_owner
+               FROM UsuariosEmCurso uec
+               JOIN Cursos c ON uec.curso_id = c.ID_curso
+               JOIN Usuarios u ON c.id_owner = u.ID
+               WHERE uec.usuario_id = $1
+               ORDER BY c.ID_curso ASC
+          `, [usuario_id]);
+          
+          res.json(result.rows);
+     } catch (error) {
+          res.status(500).json({ error: 'Erro ao buscar cursos do usuário', details: error.message });
+     }
 });
-
 
 // POST /api/usuarios-em-curso     =     Adicionar um usuário a um curso
 router.post('/', async (req, res) => {

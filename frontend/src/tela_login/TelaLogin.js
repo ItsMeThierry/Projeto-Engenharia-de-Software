@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { is_user_real, get_user, create_user } from '../api/requests.js';
 import { usePermissionContext } from '../context/PermissionContext.js';
+import logo from '../icones/logo.png';
 import './TelaLogin.css'
 
 const TelaLogin = () => {
@@ -16,7 +17,7 @@ const TelaLogin = () => {
   const [tipoUsuario, setTipoUsuario] = useState('aluno');
 
   const navigate = useNavigate();
-  const { setUsername, setUserId, setUserType } = usePermissionContext();
+  const { setUserData } = usePermissionContext();
 
   const handleEntrar = async () => {
     const result = await is_user_real(nome, email);
@@ -25,9 +26,12 @@ const TelaLogin = () => {
       const user_data = await get_user(email);
 
       if (user_data) {
-        setUserId(user_data.id);
-        setUsername(user_data.nome);
-        setUserType(user_data.cargo);
+        setUserData({
+          user_id: user_data.id,
+          username: user_data.nome,
+          user_type: user_data.cargo,
+          user_email: user_data.email
+        });
       }
 
       navigate('/');
@@ -91,9 +95,11 @@ const TelaLogin = () => {
         <div className="login-form">
           {/* Placeholder para logo */}
           <div className="logo-placeholder">
-            <div className="logo-box">
-              LOGO
-            </div>
+              <img 
+                  src={logo} 
+                  alt='logo'
+                  style={{ width: '80px', height: '80px', objectFit: 'contain' }}
+              />
           </div>
 
           {/* Inputs */}

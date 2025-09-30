@@ -8,14 +8,15 @@ function Chat({ socket, messages, onlineUsers }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const { id } = useParams();
     
-    const { username, user_id } = usePermissionContext();
+    const { getUserData } = usePermissionContext();
 
+    const userData = getUserData();
     const sendMessage = () => {
         if(socket) {
             const message_data = {
                 room_id: parseInt(id),
-                user_id: user_id,
-                username: username,
+                user_id: userData.id,
+                username: userData.nome,
                 text: newMesssage,
                 date: new Date().toLocaleString('pt-BR')
             }
@@ -26,7 +27,7 @@ function Chat({ socket, messages, onlineUsers }) {
     };
 
     const renderMessage = ({ index, msg }) => {
-        if (msg.user_id !== user_id) {
+        if (msg.user_id !== userData.id) {
             return (<Message key={index} username={msg.username} date={msg.date} text={msg.text}/>);
         }
 

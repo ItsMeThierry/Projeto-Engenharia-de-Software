@@ -4,10 +4,10 @@ import { ReactComponent as RemoveUserIcon } from '../icones/remover-usuario.svg'
 import './Participantes.css'
 
 function UsersList() {
-    const { user_type } = usePermissionContext();
+    const { isUserMonitor } = usePermissionContext();
 
-    const renderListConfig = ({ user_type }) => {
-        if(user_type === 'monitor'){
+    const renderListConfig = ({ isUserMonitor }) => {
+        if(isUserMonitor()){
             return(
                 <div className='users-list-config'>
                     <button className='add-usr-btn'><AddUserIcon className='add-usr-icon'/></button>
@@ -34,7 +34,7 @@ function UsersList() {
 
     return(
         <div className='page'>
-            {renderListConfig({user_type})}
+            {renderListConfig({isUserMonitor})}
             <div className='users-list'>
                 {users.map(u => (<UserCard name={u.nome} email={u.email}/>))}
             </div>

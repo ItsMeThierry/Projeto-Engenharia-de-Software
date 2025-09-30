@@ -2,20 +2,22 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useParams, useNavigate } from 'react-router-dom';
 import { PermissionProvider, usePermissionContext } from './context/PermissionContext.js';
 import { is_course_real } from './api/requests.js';
+import { Bell, BookOpen, Home, Settings } from "lucide-react";
+import logo from './icones/logo.png';
 import TelaDeCurso from './tela_de_curso/TelaDeCurso.js';
 import TelaDashboard from './tela_dashboard/TelaDashboard.js';
 import TelaLogin from './tela_login/TelaLogin.js';
 import TelaErro from './TelaErro.js';
 import NotificationModal from './tela_dashboard/NotificationModal.js';
 import TelaPerfil from './tela_perfil/TelaPefil.js';
-import { Bell, BookOpen, Home, Settings } from "lucide-react";
 import './App.css';
 import './tela_dashboard/TelaDashboard.css';
 
 function ProtectedRoute({ children }) {
-  const { user_id } = usePermissionContext();
+  const { getUserData } = usePermissionContext();
+  const userData = getUserData();
 
-  if (user_id === -1){
+  if (userData.id === null){
     return <Navigate to="/login" replace />;
   }
 
@@ -54,8 +56,10 @@ function CourseRoute({ children }) {
   return children;
 }
 
-function Header({ user, setUser, isMonitor }) {
+function Header() {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const { isUserMonitor, getUserData } = usePermissionContext();
+  const userData = getUserData();
   const navigate = useNavigate();
 
   const [disciplines] = useState([
@@ -71,7 +75,7 @@ function Header({ user, setUser, isMonitor }) {
     <>
       <header className="app-header">
         <div className="logo">
-          <img src="./icones/logo.png" alt="logo" />
+          <img src={logo} alt="logo" />
         </div>
         <nav className="nav-links">
           <a href="#" className="nav-link" onClick={() => navigate('/')}>
@@ -84,7 +88,7 @@ function Header({ user, setUser, isMonitor }) {
             <span>Notificações</span>
           </a>
 
-          {isMonitor && (
+          {isUserMonitor() && (
             <a href="#" className="nav-link" onClick={() => navigate('/')}>
               <Settings size={18} />
               <span>Gerenciar Disciplinas</span>
@@ -92,11 +96,11 @@ function Header({ user, setUser, isMonitor }) {
           )}
 
           <a href="#" className="nav-link avatar-link" onClick={() => navigate('/perfil')}>
-            {user.avatar ? (
-              <img src={user.avatar} alt={user.name} className="avatar-small" />
+            {userData.avatar ? (
+              <img src={userData.avatar} alt={userData.nome} className="avatar-small" />
             ) : (
               <div className="avatar-small-fallback">
-                {user.name.charAt(0).toUpperCase()}
+                {userData.nome.charAt(0).toUpperCase()}
               </div>
             )}
           </a>
@@ -113,12 +117,6 @@ function Header({ user, setUser, isMonitor }) {
 }
 
 function App() {
-  const [user, setUser] = useState({
-    name: "Usuário Padrão",
-    email: "usuario@exemplo.com",
-    avatar: ""
-  });
-  const [isMonitor] = useState(false);
   const [currentView, setCurrentView] = useState("list");
 
   return (
@@ -131,20 +129,13 @@ function App() {
             <Route path="/*" element={
               <ProtectedRoute>
                 <>
-                  <Header 
-                    user={user} 
-                    setUser={setUser} 
-                    isMonitor={isMonitor}
-                  />
+                  <Header />
                   <main className="main-content">
                     <Routes>
                       <Route 
                         path="/" 
                         element={
                           <TelaDashboard 
-                            user={user} 
-                            setUser={setUser}
-                            isMonitor={isMonitor}
                             currentView={currentView}
                             setCurrentView={setCurrentView}
                           />
@@ -153,10 +144,7 @@ function App() {
                       <Route
                         path="/perfil"
                         element={
-                          <TelaPerfil 
-                            user={user}
-                            setUser={setUser}
-                          />
+                          <TelaPerfil />
                         }
                       />
                       <Route 

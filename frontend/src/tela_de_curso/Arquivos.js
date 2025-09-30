@@ -22,43 +22,50 @@ function Archives() {
     const [groupsToRemove, setGroupsToRemove] = useState([]);
     const [selectedForRemoval, setSelectedForRemoval] = useState([]);
 
-    const { user_type } = usePermissionContext();
+    const { isUserMonitor } = usePermissionContext();
 
     useEffect(() => {
-        const fetchGroups = async () => {
-            try {
-                const data = await get_content_groups(id);
-                setGroups(data);
-            } catch (e) {
-                console.error(e);
+    const fetchGroups = async () => {
+        try {
+            const response = await get_content_groups(id);
+            console.log(response);
+            
+            if(response) {
+                setGroups(Array.isArray(response) ? response : []);
+            } else {
+                setGroups([]);
             }
-        };
+        } catch (e) {
+            console.error(e);
+            setGroups([]);
+        }
+    };
 
-        fetchGroups();
-    }, [id]);
+    fetchGroups();
+}, [id]);
 
     // Funções para criar grupo
     const handleCreateGroup = async (groupData) => {
         try{
             const result = await create_content_group(
-                groupData.title,
-                groupData.description,
+                groupData.nome,
+                groupData.descricao,
                 id
             );
 
             if (result && result.modulo){
                 const newGroup = {
                     id_modulo: result.modulo.id_modulo,
-                    nome: groupData.title,
-                    descricao: groupData.description,
+                    nome: groupData.nome,
+                    descricao: groupData.descricao,
                     contents: []
                 };
 
-                setGroups(prev => [...prev, newGroup]);
+                setGroups(prev => Array.isArray(prev) ? [...prev, newGroup] : [newGroup]);
                 setShowCreateModal(false);
-            } else {
-                console.error('Erro ao criar o grupo: ' , result);
-            }
+                return;
+            } 
+                alert('Erro ao criar o grupo!');
         } catch (e) {
             console.error('Erro ao criar grupo: ', e);
         }
@@ -145,7 +152,7 @@ function Archives() {
     };
 
     const renderGroupManagementControls = () => {
-        if (user_type === 'monitor') {
+        if (isUserMonitor()) {
             return (
                 <div className='group-management-controls'>
                     <button className='create-group-btn' onClick={() => setShowCreateModal(true)}>
@@ -166,13 +173,17 @@ function Archives() {
         <div className='page'>
             {renderGroupManagementControls()}
 
-            {groups.map(group => (
+            {groups.length > 0 ? groups.map(group => (
                 <ContentGroup 
-                    key={group.id}
+                    key={group.id_modulo || group.id} // Use id_modulo como fallback
                     group={group}
                     onEdit={handleEditGroup}
                 />
-            ))}
+            )) : (
+                <div className="no-groups-message">
+                    Nenhum grupo de conteúdo encontrado.
+                </div>
+            )}
 
             {/* Modal de Criação */}
             {showCreateModal && (
@@ -203,7 +214,7 @@ function Archives() {
                         <h3 className='confirmation-title'>Quais grupos deseja remover?</h3>
                         
                         <div className='file-list-confirmation'>
-                            {groups.map((group) => (
+                            {groups.length > 0 ? groups.map((group) => (
                                 <div key={group.id_modulo} className='file-item-with-checkbox'>
                                     <input 
                                         type="checkbox"
@@ -216,7 +227,12 @@ function Archives() {
                                         <span className='file-size'>{group.contents.length} arquivo(s)</span>
                                     </div>
                                 </div>
-                            ))}
+                            )) : 
+                            (
+                                <div className="no-groups-message">
+                                    Nenhum grupo disponível para remoção.
+                                </div>
+                            )}
                         </div>
 
                         <div className='confirmation-buttons'>
@@ -281,7 +297,7 @@ function ContentGroup({ group, onEdit }) {
     const [filesToRemove, setFilesToRemove] = useState([]);
     const [selectedForRemoval, setSelectedForRemoval] = useState([]);
     
-    const { user_type } = usePermissionContext();
+    const { isUserMonitor } = usePermissionContext();
     const fileInputRef = useRef(null);
 
     // Converte um número de bytes em uma string com o formato legivel
@@ -326,7 +342,7 @@ function ContentGroup({ group, onEdit }) {
     // Realiza o upload do arquivo na database
     const handleConfirmUpload = () => {
         // Aqui você implementaria a lógica de upload
-        console.log('Enviando arquivos para o grupo:', group.id, selectedFiles);
+        console.log('Enviando arquivos para o grupo:', group.id_modulo, selectedFiles);
         handleCancelUpload();
     };
 
@@ -369,12 +385,12 @@ function ContentGroup({ group, onEdit }) {
 
     const handleConfirmRemove = () => {
         // Aqui você implementaria a lógica de remoção dos arquivos
-        console.log('Removendo arquivos do grupo:', group.id, filesToRemove);
+        console.log('Removendo arquivos do grupo:', group.id_modulo, filesToRemove);
         handleCancelRemoveConfirmation();
     };
 
     const renderListConfig = () => {
-        if (user_type === 'monitor') {
+        if (isUserMonitor()) {
             return (
                 <div className='content-list-config'>
                     <input 
@@ -398,7 +414,7 @@ function ContentGroup({ group, onEdit }) {
     };
 
     const renderGroupControls = () => {
-        if (user_type === 'monitor') {
+        if (isUserMonitor()) {
             return (
                 <button className='edit-group-btn' onClick={() => onEdit(group)}>
                     <EditIcon className='edit-icon' />
@@ -430,7 +446,7 @@ function ContentGroup({ group, onEdit }) {
 
                     {/* TODO: TALVEZ MUDAR O CONTENT.ID DAQUI */}
                     <div className='content-list'>
-                        {group.contents.map((content, index) => (
+                        {group.contents && group.contents.length > 0 ? group.contents.map((content, index) => (
                             <div key={content.id} className='content-card'>
                                 <div className='content-icon'>
                                     📄
@@ -440,7 +456,11 @@ function ContentGroup({ group, onEdit }) {
                                     <span className='content-meta'>{content.size}</span>
                                 </div>
                             </div>
-                        ))}
+                        )) : (
+                            <div className="no-contents-message">
+                                Nenhum arquivo neste grupo.
+                            </div>
+                        )}
                     </div>
 
                     {renderListConfig()}
@@ -493,7 +513,7 @@ function ContentGroup({ group, onEdit }) {
                         <h3 className='confirmation-title'>Quais arquivos deseja remover?</h3>
                         
                         <div className='file-list-confirmation'>
-                            {group.contents.map((content) => (
+                            {group.contents && group.contents.length > 0 ? group.contents.map((content) => (
                                 <div key={content.id} className='file-item-with-checkbox'>
                                     <input 
                                         type="checkbox"
@@ -506,7 +526,12 @@ function ContentGroup({ group, onEdit }) {
                                         <span className='file-size'>{content.size}</span>
                                     </div>
                                 </div>
-                            ))}
+                            )) : 
+                            (
+                                <div className="no-contents-message">
+                                    Nenhum arquivo para remover.
+                                </div>
+                            )}
                         </div>
 
                         <div className='confirmation-buttons'>
@@ -608,24 +633,24 @@ function GroupModal({ title, initialData = null, onSave, onCancel }) {
                         <label className='form-label'>Nome do Grupo:</label>
                         <input
                             type='text'
-                            className={`form-input ${errors.title ? 'error' : ''}`}
+                            className={`form-input ${errors.nome ? 'error' : ''}`}
                             value={formData.nome}
                             onChange={(e) => handleChange('nome', e.target.value)}
                             placeholder='Digite o nome do grupo'
                         />
-                        {errors.title && <span className='error-message'>{errors.title}</span>}
+                        {errors.nome && <span className='error-message'>{errors.nome}</span>}
                     </div>
 
                     <div className='form-field'>
                         <label className='form-label'>Descrição:</label>
                         <textarea
-                            className={`form-textarea ${errors.description ? 'error' : ''}`}
+                            className={`form-textarea ${errors.descricao ? 'error' : ''}`}
                             value={formData.descricao}
                             onChange={(e) => handleChange('descricao', e.target.value)}
                             placeholder='Digite a descrição do grupo'
                             rows={4}
                         />
-                        {errors.description && <span className='error-message'>{errors.description}</span>}
+                        {errors.descricao && <span className='error-message'>{errors.descricao}</span>}
                     </div>
 
                     <div className='confirmation-buttons'>

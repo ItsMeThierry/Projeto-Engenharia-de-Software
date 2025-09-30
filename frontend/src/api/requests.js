@@ -56,21 +56,47 @@ const get_participants =  async (id_course) => {
 }
 
 const add_user_course = async (id_user, id_course) => {
+    try{
+        const response = await fetch(`http://localhost:5000/api/usuarios-em-curso`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json',},
+            body: JSON.stringify({
+                usuario_id: id_user,
+                curso_id: id_course
+            }),
+        });
 
+        const data = await response.json();
+        return data;
+    } catch (e) {
+        console.error(e);
+    }
 }
 
 const remove_user_course = async (id_user, id_course) => {
 
 }
 
+const get_user_courses = async (id_user) => {
+    try {
+        const response = await fetch(`http://localhost:5000/api/usuarios-em-curso/${id_user}`)
+        const data = await response.json();
+        return data;
+    } catch (e) {
+        console.error(e);
+    }
+}
+
 // Cursos
-const add_course = async (name) => {
+const add_course = async (name, description, id_user) => {
     try{
         const response = await fetch(`http://localhost:5000/api/cursos`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json',},
             body: JSON.stringify({
-                nome: name
+                nome: name,
+                descricao: description,
+                ID: id_user
             }),
         });
         const data = await response.json();
@@ -123,7 +149,11 @@ const get_content_groups = async (id_course) => {
     try{
         const response = await fetch(`http://localhost:5000/api/modulos/curso/${id_course}`);
         const data = await response.json();
-        data.map(group => group.contents = []); // TODO: RETIRAR QUANDO IMPLEMENTAR O ARMAZENAMENTO DE ARQUIVOS
+
+        if(response.ok) {
+            data.map(group => group.contents = []); // TODO: RETIRAR QUANDO IMPLEMENTAR O ARMAZENAMENTO DE ARQUIVOS
+        }
+
         return data;
     } catch (e) {
         console.error(e);
@@ -195,6 +225,7 @@ module.exports = {
     get_user,
     create_user,
     get_participants,
+    get_user_courses,
     add_user_course,
     remove_user_course,
     add_course,

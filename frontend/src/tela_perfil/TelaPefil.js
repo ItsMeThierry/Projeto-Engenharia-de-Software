@@ -1,20 +1,24 @@
 import React, { useState } from 'react';
+import { usePermissionContext } from '../context/PermissionContext';
 import { User, Settings, Bell } from 'lucide-react';
 import './TelaPerfil.css';
 
-const TelaPerfil = ({ user, setUser }) => {
+const TelaPerfil = () => {
+    const { getUserData } = usePermissionContext();
     const [activeTab, setActiveTab] = useState('personal');
+
+    const userData = getUserData();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setUser(prev => ({ ...prev, [name]: value }));
+        //setUser(prev => ({ ...prev, [name]: value }));
     };
 
     const handleAvatarChange = (e) => {
         if (e.target.files && e.target.files[0]) {
             const reader = new FileReader();
             reader.onload = (event) => {
-                setUser(prev => ({ ...prev, avatar: event.target.result }));
+                //setUser(prev => ({ ...prev, avatar: event.target.result }));
             };
             reader.readAsDataURL(e.target.files[0]);
         }
@@ -27,11 +31,11 @@ const TelaPerfil = ({ user, setUser }) => {
                     <div className="profile-form">
                         <h3>Informações Pessoais</h3>
                         <div className="avatar-section">
-                            {user.avatar ? (
-                                <img src={user.avatar} alt="Avatar" className="avatar-preview" />
+                            {userData.avatar ? (
+                                <img src={userData.avatar} alt="Avatar" className="avatar-preview" />
                             ) : (
                                 <div className="avatar-preview avatar-fallback">
-                                    {user.name.charAt(0).toUpperCase()}
+                                    {userData.nome.charAt(0).toUpperCase()}
                                 </div>
                             )}
                             <input
@@ -50,7 +54,7 @@ const TelaPerfil = ({ user, setUser }) => {
                                 type="text"
                                 id="name"
                                 name="name"
-                                value={user.name}
+                                value={userData.nome}
                                 onChange={handleInputChange}
                             />
                         </div>
@@ -60,7 +64,7 @@ const TelaPerfil = ({ user, setUser }) => {
                                 type="email"
                                 id="email"
                                 name="email"
-                                value={user.email}
+                                value={userData.email}
                                 onChange={handleInputChange}
                             />
                         </div>

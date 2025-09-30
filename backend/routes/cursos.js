@@ -34,17 +34,39 @@ router.get('/:id', async (req, res) => {
 
 // POST /api/cursos     =      Criar um novo curso
 router.post('/', async (req, res) => {
-  const { nome } = req.body;
-  if (!nome) {
-    return res.status(400).json({ error: 'O nome do curso é obrigatório' });
+  const { nome, descricao, ID } = req.body;
+  if (!nome || !ID) {
+    return res.status(400).json({ error: 'O nome do curso e ID do usuário são obrigatórios' });
   }
 
   try {
-    const result = await pool.query(
-      'INSERT INTO Cursos (nome) VALUES ($1) RETURNING *',
-      [nome]
-    );
-    res.status(201).json(result.rows[0]);
+    const client = await pool.connect();
+    
+    try {
+      await client.query('BEGIN');
+
+      const cursoResult = await client.query(
+        'INSERT INTO Cursos (nome, descricao, id_owner) VALUES ($1, $2, $3) RETURNING *',
+        [nome, descricao || null, ID]
+      );
+
+      const novoCurso = cursoResult.rows[0];
+
+      await client.query(
+        'INSERT INTO UsuariosEmCurso (usuario_id, curso_id) VALUES ($1, $2)',
+        [ID, novoCurso.id_curso]
+      );
+
+      await client.query('COMMIT');
+      res.status(201).json(novoCurso);
+
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
+
   } catch (error) {
     res.status(500).json({ error: 'Erro ao criar curso', details: error.message });
   }

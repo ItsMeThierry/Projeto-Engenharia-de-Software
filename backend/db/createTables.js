@@ -1,6 +1,7 @@
 const pool = require('./index');
 
 const createTables = async () => {
+  console.log('Ok');
   try {
     // Usuários
     await pool.query(`
@@ -16,7 +17,10 @@ const createTables = async () => {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS Cursos (
         ID_curso SERIAL PRIMARY KEY,
-        nome VARCHAR(100) NOT NULL
+        nome VARCHAR(100) NOT NULL,
+        descricao TEXT,
+        id_owner INT NOT NULL,
+        FOREIGN KEY (id_owner) REFERENCES Usuarios(ID) ON DELETE CASCADE
       );
     `);
 
