@@ -9,7 +9,6 @@ function Chat({ socket, messages, onlineUsers }) {
     const { id } = useParams();
     
     const { username, user_id } = usePermissionContext();
-    console.log(id);
 
     const sendMessage = () => {
         if(socket) {
@@ -44,8 +43,8 @@ function Chat({ socket, messages, onlineUsers }) {
                 <div className={`chat-sidebar ${isSidebarOpen ? 'open' : ''}`}>
                     <h1>Participantes Online</h1>
                     <div className='chat-online-list'>
-                        {onlineUsers.map((users, index) => (
-                            <OnlineUser name='Nome'/>
+                        {onlineUsers.map((name, index) => (
+                            <OnlineUser key={index} name={name}/>
                         ))}
                     </div>
                 </div>
@@ -81,9 +80,9 @@ function Chat({ socket, messages, onlineUsers }) {
     );
 }
 
-function OnlineUser({ name }) {
+function OnlineUser({ key, name }) {
     return(
-        <div className='chat-user'>
+        <div key={key} className='chat-user'>
             <span className='avatar'>👤</span>
             <span>{name}</span>
         </div>

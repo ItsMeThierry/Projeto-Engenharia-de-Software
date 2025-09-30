@@ -50,53 +50,63 @@ const startServer = async () => {
     let users_online = [];
 
     io.on('connection', (socket) => {
-
+  
       socket.on('joined_room', (data) => {
         socket.join(data.room_id);
 
-        const room = users_online.find(r => r.room_id === data.room_id);
+        const userExists = users_online.some(user => 
+          user.room_id === data.room_id && user.username === data.username
+        );
 
-        if(room){
-          if(!room.users_id.includes(data.user_id)){
-            room.users_id.push(data.user_id);
-          }
-        } else {
-          const room_data = {
+        if(!userExists) {
+          const user_data = {
             room_id: data.room_id,
-            users_id: [data.user_id]
+            username: data.username,
+            socket_id: socket.id
           };
-
-          users_online.push(room_data);
+          users_online.push(user_data);
         }
 
-        const users_list = users_online.find(room => room.room_id === data.room_id)?.users_id || [];
+        const users_list = users_online
+          .filter(user => user.room_id === data.room_id)
+          .map(user => user.username);
+        
         io.to(data.room_id).emit('update_rooms', users_list);
       });
 
       socket.on('left_room', (data) => {
         socket.leave(data.room_id);
 
-        let room = users_online.find(r => r.room_id === data.room_id);  
+        users_online = users_online.filter(user => 
+          !(user.room_id === data.room_id && user.username === data.username)
+        );
+
+        const users_list = users_online
+          .filter(user => user.room_id === data.room_id)
+          .map(user => user.username);
         
-        if(room) {
-          room.users_id = room.users_id.filter(id => id !== data.user_id);
-
-          if(room.users_id.length === 0){
-            users_online = users_online.filter(r => r.room_id !== data.room_id);
-          }
-        }
-
-        const users_list = users_online.find(room => room.room_id === data.room_id)?.users_id || [];
         io.to(data.room_id).emit('update_rooms', users_list);
+      });
+
+      socket.on('disconnect', (reason) => {
+        console.log('Usuário desconectado:', socket.id, 'Motivo:', reason);
+        
+        const disconnectedUser = users_online.find(user => user.socket_id === socket.id);
+        
+        if (disconnectedUser) {
+          users_online = users_online.filter(user => user.socket_id !== socket.id);
+          
+          const users_list = users_online
+            .filter(user => user.room_id === disconnectedUser.room_id)
+            .map(user => user.username);
+          
+          io.to(disconnectedUser.room_id).emit('update_rooms', users_list);
+          console.log(`Usuário ${disconnectedUser.username} removido da sala ${disconnectedUser.room_id}`);
+        }
       });
 
       socket.on('send_message', (data) => {
         io.to(data.room_id).emit('recieve_message', data);
-      });
-
-
-      socket.on('disconnect', () => {
-        console.log('Usuário desconectado:', socket.id);
       });
     });
 

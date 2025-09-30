@@ -20,7 +20,7 @@ function TelaDeCurso() {
     const [messages, setMessages] = useState([]);
     const [onlineUsers, setOnlineUsers] = useState([]);
     const { id } = useParams();
-    const { user_id } = usePermissionContext();
+    const { username } = usePermissionContext();
     
     useEffect(() => {
         const newSocket = io('http://localhost:5000');
@@ -28,7 +28,7 @@ function TelaDeCurso() {
 
         const room_data = {
             room_id: parseInt(id),
-            user_id: user_id
+            username: username
         }
 
         newSocket.emit('joined_room', room_data);
@@ -42,10 +42,9 @@ function TelaDeCurso() {
         });
     
         return () => {
-            newSocket.emit('left_room', room_data);
             newSocket.disconnect();
         };
-    }, [user_id, id]);
+    }, [username, id]);
 
     return(
         <div className='main-layout'>
