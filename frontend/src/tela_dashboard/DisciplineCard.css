@@ -1,0 +1,103 @@
+.discipline-card {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 0;
+    width: 100%;
+    max-width: 350px;
+    min-height: 220px;
+    box-shadow: 0 6px 12px var(--shadow-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: left;
+    background-color: var(--background);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+}
+
+/* Efeito hover no card */
+.discipline-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.discipline-card h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    color: var(--text);
+    font-size: 1.2rem;
+    font-weight: 600;
+    line-height: 1.3;
+    min-height: 50px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.discipline-card p {
+    margin: 8px 0;
+    color: var(--text-light);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.discipline-card .stats {
+    display: flex;
+    justify-content: space-between;
+    margin: 16px 0;
+    padding: 12px 0;
+    font-size: 0.9em;
+    color: var(--text-lighter);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.discipline-card .stats span {
+    font-weight: 500;
+}
+
+/* BOTÃO COM ÍCONE */
+.discipline-card .enter-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--primary);
+    color: var(--background);
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-top: auto;
+}
+
+.discipline-card .enter-button:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.discipline-card .enter-button:active {
+    transform: translateY(0);
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 480px) {
+    .discipline-card {
+        padding: 20px;
+        min-height: 200px;
+    }
+
+    .discipline-card h3 {
+        font-size: 1.1rem;
+        min-height: 45px;
+    }
+
+    .discipline-card .enter-button {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+        gap: 6px;
+    }
+}

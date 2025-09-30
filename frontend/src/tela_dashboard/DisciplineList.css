@@ -1,0 +1,56 @@
+.discipline-list-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    width: 100%;
+}
+
+.discipline-list-container h2 {
+    margin-bottom: 40px;
+    color: var(--text);
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+/* GRID HORIZONTAL - Cards lado a lado */
+.discipline-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+    justify-items: center;
+    align-items: stretch; /* Faz todos os cards terem a mesma altura */
+    width: 100%;
+}
+
+/* Para tablets */
+@media (max-width: 992px) {
+    .discipline-list {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+    }
+}
+
+/* Para telas menores */
+@media (max-width: 768px) {
+    .discipline-list {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .discipline-list-container {
+        padding: 20px 15px;
+    }
+
+    .discipline-list-container h2 {
+        font-size: 1.5rem;
+        margin-bottom: 30px;
+    }
+}
+
+/* Para telas muito pequenas */
+@media (max-width: 480px) {
+    .discipline-list-container {
+        padding: 15px 10px;
+    }
+}
