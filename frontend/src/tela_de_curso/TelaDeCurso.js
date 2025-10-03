@@ -59,8 +59,7 @@ function TelaDeCurso() {
 function Sidebar({ activePage, setActivePage }) {
     const menu_items = [
         'Arquivos',
-        'Chat Geral',
-        'Participantes'
+        'Chat Geral'
     ];
 
     const renderIcon = ({ item }) => {

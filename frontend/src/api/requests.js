@@ -151,7 +151,12 @@ const get_content_groups = async (id_course) => {
         const data = await response.json();
 
         if(response.ok) {
-            data.map(group => group.contents = []); // TODO: RETIRAR QUANDO IMPLEMENTAR O ARMAZENAMENTO DE ARQUIVOS
+            data.map(group => group.contents = [
+                { id: 1, name: "Exercícios Práticos", type: "pdf", size: "210 kB" }
+                // { id: 2, name: "Movimento Harmônico", type: "pdf", size: "27.4 MB" },
+                // { id: 3, name: "Pêndulo Simples", type: "pdf", size: "24.3 MB" },
+                // { id: 4, name: "Pêndulo Físico", type: "pdf", size: "13.4 MB" }
+            ]); // TODO: RETIRAR QUANDO IMPLEMENTAR O ARMAZENAMENTO DE ARQUIVOS
         }
 
         return data;
