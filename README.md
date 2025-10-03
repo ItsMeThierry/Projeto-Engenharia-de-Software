@@ -1,4 +1,4 @@
-# Projeto de Engenharia de Software (Título ainda a ser decidido)
+# Projeto de Engenharia de Software (Mindboard)
 
 ## Requisitos
 
